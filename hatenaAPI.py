@@ -26,10 +26,15 @@ def main():
     # Get my feed infomation.
     print "--- start ---"
     f = Feed()
-    fe = f.load()
+    urls = f.load()
+    print urls
+    tt = open("./bookmarks.txt", "w")
+    tt.write("\n".join(urls))
+    tt.close()
 
-    # Gather #users reading my feed.
-    b = BookmarkUser(fe)
+    # Gather users reading my feed.
+    print "Explore Bookmark users"
+    b = BookmarkUser(urls)
     users = b.extract()
     b.save(users)
 
@@ -41,7 +46,7 @@ def main():
         recFeed = Feed(user)    # this constract is so vain...
         urls = recFeed.load()
         recFeed.save(urls, user_no)
-        time.sleep(0.05)
+        time.sleep(0.5)
     print "--- end ---"
 
 def _connectDb():
@@ -71,7 +76,7 @@ class Feed:
             pass
 
     def load(self):
-        print "load start"
+        print "User: %s " % (self.user)
         urls = []
         # num = 0
         start = conf.START_FEED_ID
@@ -79,8 +84,8 @@ class Feed:
         interval = conf.FEED_INTERVAL
 
         for i in range(start, end, interval):
+            print "Feed no: From %s To %s" % (i, i+interval)
             url = self.__make_url(i)
-            print url
             try:
                 response = self.opener.open(url)
             except:
@@ -103,7 +108,6 @@ class Feed:
     def __parse_feed(self, response):
         c = response.read()
         p = feedparser.parse(c)
-        print p
         return p
 
     def __process_entry(self, feed):
@@ -115,20 +119,21 @@ class Feed:
 
     def save(self, urls, user_no):
         global COLLECT_NO
-        f = open("./long_urls.txt", "a")
+        #f = open("./long_urls.txt", "a")
         collect_no = 1
         for url in urls:
-            if self.__is_long_url(url):
-                f.write("%s¥n" % (url))
-                continue
+            #if self.__is_long_url(url):
+            #    f.write("%s¥n" % (url))
+            #    continue
             is_register = self.__is_register(url)
             if is_register:
                 self.__update_recomend_time(url)
                 continue
             self.__append_url(url, user_no)
             COLLECT_NO += 1
-        f.close()
-
+        #f.close()
+    
+    # change database setting
     def __is_long_url(self, url):
         l = len(url)
         if l > 255:
@@ -138,7 +143,7 @@ class Feed:
     def __is_register(self, user):
         conn = _connectDb()
         sql = ("select * "
-                "from recomend_feed_test "
+                "from recomend_feed "
                 "where url = '%s' "
                 " and  collect_day = '%s' ;"% (
                     user,
@@ -151,16 +156,15 @@ class Feed:
 
     def __update_recomend_time(self, url):
         conn = _connectDb()
-        sql =  ("update recomend_feed_test "
+        sql =  ("update recomend_feed "
                 "set recomend_times = recomend_times + 1 "
                 "where url = '%s' ;" % (
                     url))
-        print sql
         conn.updateRecords(sql)
 
     def __append_url(self, url, user_no):
         conn = _connectDb()
-        sql =  ("insert into recomend_feed_test( "
+        sql =  ("insert into recomend_feed( "
                 "  url, collect_day, collect_no, user_no) "
                 "values ('%s', '%s', '%s', '%s'); " % (
                     url,
@@ -168,28 +172,34 @@ class Feed:
                     COLLECT_NO,
                     user_no)
                 )
-        print sql
         conn.insertRecord(sql)
         #sys.exit(0)
 
 class BookmarkUser:
 
-    def __init__(self, targets):
+    def __init__(self, urls):
         # call twice, so in vain
         self.opener = urllib2.build_opener()
-        self.targets = targets
+        self.urls = urls
         self.interval = conf.ACCESS_INTERVAL
 
     def extract(self):
+        print "BookmarkUser extract"
         users = []
-        for target in self.targets:
-            url = self.__make_url(target)
+        for feedurl in self.urls:
+            print "target url: %s" % (feedurl)
+            url = self.__make_url(feedurl)
             response = self.opener.open(url)
             f = self.__parse(response)
+            # Don't examine patterns not "bookamark" keys
+            if "bookmarks" not in f:
+                continue
             for bookmark in f["bookmarks"]:
                 #users.append([url[0], bookmark["user"]])
+                if "user" not in bookmark:
+                    continue
                 users.append(bookmark["user"])
-            #time.sleep(self.interval)
+            time.sleep(self.interval)
         return users
 
     def __make_url(self, target):
@@ -210,7 +220,7 @@ class BookmarkUser:
     def __is_register(self, user):
         conn = _connectDb()
         sql = ("select * "
-                "from users_test "
+                "from users "
                 "where user_name = '%s'; " % (
                     user)
                 )
@@ -221,7 +231,7 @@ class BookmarkUser:
 
     def __update_recomend_time(self, user):
         conn = _connectDb()
-        sql =  ("update users_test "
+        sql =  ("update users "
                 "set recomend_times = recomend_times + 1 "
                 "where user_name = '%s' ;" % (
                     user))
@@ -229,20 +239,19 @@ class BookmarkUser:
 
     def __append_user(self, user):
         conn = _connectDb()
-        sql =  ("insert into users_test( "
+        sql =  ("insert into users( "
                 "  user_name, register_datetime) "
                 "values ('%s', '%s'); " % (
                     user,
                     date.today().strftime("%Y%m%d"))
                 )
-        print sql
         conn.insertRecord(sql)
         #sys.exit(0)
 
     def load_user_no(self, user):
         conn = _connectDb()
         sql =  ("select user_no "
-                "from users_test "
+                "from users "
                 "where user_name = '%s' ;" % (
                     user)
                 )
