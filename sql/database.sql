@@ -37,4 +37,18 @@ create table users (
 );
 
 
-
+create table my_bookmarks (
+    no int(10) auto_increment not null,
+    url text,
+    is_search tinyint default 0,
+    invalid tinyint default 0,
+    update_time timestamp,
+    primary key(
+        no
+    ),
+    index(
+    no,
+    is_search,
+    invalid
+    )
+);
