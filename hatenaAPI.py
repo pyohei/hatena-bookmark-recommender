@@ -11,7 +11,8 @@ import conf
 import feedparser
 import json
 import time
-from dbConnector import DbConnector
+from lib.dbConnector import DbConnector
+from hatena.mybook import Mybook
 import sys
 from datetime import date
 
@@ -27,11 +28,11 @@ def main():
     print "--- start ---"
     f = Feed()
     urls = f.load()
-    print urls
-    tt = open("./bookmarks.txt", "w")
-    tt.write("\n".join(urls))
-    tt.close()
+    mb = Mybook(_connectDb())
+    mb.register(urls)
 
+    print "success!"
+    raise # for degub
     # Gather users reading my feed.
     print "Explore Bookmark users"
     b = BookmarkUser(urls)
