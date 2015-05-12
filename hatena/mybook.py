@@ -37,4 +37,15 @@ class Mybook(object):
         if records:
             return True
         return False
-    
+
+    def select_urls(self, is_all=False):
+        sql = (
+            "SELECT * "
+            "FROM my_bookmarks "
+            "WHERE invalid = 0 "
+            )
+        if not is_all:
+            sql += "and is_search = 0 "
+        sql += "; "
+        recs = self.conn.fetchRecords(sql)
+        return [ r["url"] for r in recs if "url" in r]

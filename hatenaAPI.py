@@ -22,15 +22,19 @@ HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/"
 _CONNECTION = None
 COLLECT_NO = 1
 
-def main():
+def main(is_all=False):
 
     # Get my feed infomation.
     print "--- start ---"
     f = Feed()
-    urls = f.load()
+    #urls = f.load()
     mb = Mybook(_connectDb())
-    mb.register(urls)
+    #mb.register(urls)
 
+    if not is_all:
+        urls = mb.select_urls(is_all=False)
+    else:
+        urls = mb.select_urls()
     print "success!"
     raise # for degub
     # Gather users reading my feed.
