@@ -5,7 +5,15 @@
 
 """
 
-class BookmarkUser:
+import urllib2
+import time
+import json
+import conf
+
+HATENA_FEED_URL =  "http://b.hatena.ne.jp/user/rss?of="
+HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/"
+
+class User:
 
     def __init__(self, conn, urls):
         # call twice, so in vain

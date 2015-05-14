@@ -5,6 +5,8 @@
 
 """
 
+HATENA_FEED_URL =  "http://b.hatena.ne.jp/user/rss?of="
+HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/"
 
 class Mybook(object):
 
@@ -49,3 +51,5 @@ class Mybook(object):
         sql += "; "
         recs = self.conn.fetchRecords(sql)
         return [ r["url"] for r in recs if "url" in r]
+
+
