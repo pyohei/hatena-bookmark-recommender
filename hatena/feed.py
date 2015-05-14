@@ -5,6 +5,12 @@
 
 """
 
+import urllib2
+import conf
+import feedparser
+
+HATENA_FEED_URL =  "http://b.hatena.ne.jp/user/rss?of="
+HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/"
 
 class Feed:
 
