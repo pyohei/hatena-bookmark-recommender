@@ -14,6 +14,7 @@ from lib.dbConnector import DbConnector
 from hatena.mybook import Mybook
 from hatena.feed import Feed
 from hatena.user import User
+from hatena.recommend import Recommend
 import sys
 from datetime import date
 
@@ -51,6 +52,8 @@ def main(is_all=False):
         urls = recFeed.load()
         recFeed.save(urls, user_no)
         time.sleep(0.5)
+    r = Recommend(conn)
+    recs = r.select()
     print "--- end ---"
 
 def _connectDb():
