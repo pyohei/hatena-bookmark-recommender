@@ -1,0 +1,27 @@
+#!/usr/local/bin/python
+# -*- coding: utf-8 -*-
+
+""" configure of hatena crawler
+
+"""
+
+import MySQLdb
+
+# stub mode
+
+# hatena user name
+HATENA_ID = ""
+
+# access time (interval second)
+ACCESS_INTERVAL = 0.5
+
+# feed setting
+START_FEED_ID = 0
+LAST_FEED_ID = 200
+FEED_INTERVAL = 20
+
+CONNECTION = MySQLdb.connect(
+  host = '',
+  db = 'hatena',
+  user = '',
+  passwd = '')
