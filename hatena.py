@@ -19,13 +19,12 @@ import sys
 from datetime import date
 
 
-_CONNECTION = None
 COLLECT_NO = 1
 
 def main(is_all=False):
 
     # Get my feed infomation.
-    conn = _connectDb()
+    conn = DbConnector(conf.CONNECTION)
     print "--- start ---"
     f = Feed(conn)
     urls = f.load()
@@ -55,13 +54,6 @@ def main(is_all=False):
     r = Recommend(conn)
     recs = r.select()
     print "--- end ---"
-
-def _connectDb():
-    global _CONNECTION
-    if _CONNECTION:
-        return _CONNECTION
-    _CONNECTION= DbConnector(conf.CONNECTION)
-    return _CONNECTION
 
 if __name__ == "__main__":
     main()
