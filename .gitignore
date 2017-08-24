@@ -2,3 +2,5 @@ conf.py
 *.pyc
 *.txt
 MEMO
+
+venv/*
