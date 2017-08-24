@@ -6,25 +6,25 @@
 """
 
 import urllib2
-import conf
 import feedparser
 
 HATENA_FEED_URL =  "http://b.hatena.ne.jp/user/rss?of="
 HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/"
+ACCESS_INTERVAL = 0.5
+START_FEED_ID = 0
+LAST_FEED_ID = 200
+FEED_INTERVAL = 20
 
 class Feed:
 
-    def __init__(self, conn, user=""):
+    def __init__(self, conn, user):
         self.conn = conn
         self.opener = urllib2.build_opener()
-        self.interval = conf.ACCESS_INTERVAL
+        self.interval = ACCESS_INTERVAL
         # set user name
         # user name on conf had better set in main module
         # or make new define like 'set_hatenaid'
-        if user:
-            self.user = user
-        else:
-            self.user = conf.HATENA_ID
+        self.user = user
         # set sleep time
         try:
             if self.interval > 0:
@@ -36,9 +36,9 @@ class Feed:
         print "User: %s " % (self.user)
         urls = []
         # num = 0
-        start = conf.START_FEED_ID
-        end = conf.LAST_FEED_ID
-        interval = conf.FEED_INTERVAL
+        start = START_FEED_ID
+        end = LAST_FEED_ID
+        interval = FEED_INTERVAL
 
         for i in range(start, end, interval):
             print "Feed no: From %s To %s" % (i, i+interval)
@@ -80,7 +80,7 @@ class Feed:
         collect_no = 1
         for url in urls:
             #if self.__is_long_url(url):
-            #    f.write("%s¥n" % (url))
+            #    f.write("%s\n" % (url))
             #    continue
             is_register = self.__is_register(url)
             if is_register:
