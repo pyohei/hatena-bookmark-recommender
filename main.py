@@ -6,7 +6,6 @@
 This module can collect recomend urls of specify hatena user.
 """
 
-import conf
 import feedparser
 import json
 import time
@@ -18,13 +17,20 @@ from hatena.recommend import Recommend
 import sys
 from datetime import date
 
+import MySQLdb
+
+CONNECTION = MySQLdb.connect(
+  host = '',
+  db = 'hatena',
+  user = '',
+  passwd = '')
 
 COLLECT_NO = 1
 
 def main(is_all=False):
 
     # Get my feed infomation.
-    conn = DbConnector(conf.CONNECTION)
+    conn = DbConnector(CONNECTION)
     print "--- start ---"
     f = Feed(conn)
     urls = f.load()
