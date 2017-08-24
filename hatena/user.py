@@ -8,10 +8,10 @@
 import urllib2
 import time
 import json
-import conf
 
 HATENA_FEED_URL =  "http://b.hatena.ne.jp/user/rss?of="
 HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/"
+ACCESS_INTERVAL = 0.5
 
 class User:
 
@@ -20,7 +20,7 @@ class User:
         self.conn = conn
         self.opener = urllib2.build_opener()
         self.urls = urls
-        self.interval = conf.ACCESS_INTERVAL
+        self.interval = ACCESS_INTERVAL
 
     def extract(self):
         print "BookmarkUser extract"
@@ -97,4 +97,3 @@ class User:
             return None
         record = records[0]
         return record["user_no"]
-
