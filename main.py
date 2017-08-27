@@ -11,11 +11,12 @@ This module can collect recomend urls of specify hatena user.
 #import time
 ##  from lib.dbConnector import DbConnector
 #from hatena.mybook import Mybook
-##  from hatena.feed import Feed
+from hatena.feed import Feed
 #from hatena.user import User
 #from hatena.recommend import Recommend
 #import sys
 #from datetime import date
+from sqlalchemy import create_engine
 
 
 COLLECT_NO = 1
@@ -23,16 +24,17 @@ COLLECT_NO = 1
 ENGINE = 'sqlite:///hatena.db'
 
 def main(user):
+    engine = create_engine(ENGINE)
 
-    """
     # Get my feed infomation.
-    conn = DbConnector(CONNECTION)
+    #conn = DbConnector(CONNECTION)
     print "--- start ---"
-    f = Feed(conn)
+    f = Feed(engine, user)
+    print "--- Finish ---"
     urls = f.load()
     print(urls)
     
-    print "--- Finish ---"
+    """
     mb = Mybook(_connectDb())
     #mb.register(urls)
 

@@ -17,20 +17,14 @@ FEED_INTERVAL = 20
 
 class Feed:
 
-    def __init__(self, conn, user):
-        self.conn = conn
+    def __init__(self, engine, user):
+        self.engine = engine
         self.opener = urllib2.build_opener()
         self.interval = ACCESS_INTERVAL
         # set user name
         # user name on conf had better set in main module
         # or make new define like 'set_hatenaid'
         self.user = user
-        # set sleep time
-        try:
-            if self.interval > 0:
-                import time
-        except:
-            pass
 
     def load(self):
         print "User: %s " % (self.user)
@@ -42,32 +36,34 @@ class Feed:
 
         for i in range(start, end, interval):
             print "Feed no: From %s To %s" % (i, i+interval)
-            url = self.__make_url(i)
+            url = self._make_url(i)
             try:
                 response = self.opener.open(url)
             except:
                 continue
-            feed = self.__parse_feed(response)
+            feed = self._parse_feed(response)
             if not feed["entries"]:
                 break
-            urls += self.__process_entry(feed)
+            urls += self._process_entry(feed)
             try:
-                # time.sleep(self.interval)
-                time.sleep(0.05)
+                import time
+                #time.sleep(self.interval)
+                time.sleep(1)
+                print("....")
             except:
                 pass
         return urls
 
-    def __make_url(self, id):
+    def _make_url(self, id):
         u = HATENA_FEED_URL.replace("user", self.user)
         return u + str(id)
 
-    def __parse_feed(self, response):
+    def _parse_feed(self, response):
         c = response.read()
         p = feedparser.parse(c)
         return p
 
-    def __process_entry(self, feed):
+    def _process_entry(self, feed):
         l = []
         for f in feed["entries"]:
             link = f["link"]
