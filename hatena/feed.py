@@ -7,12 +7,14 @@
 
 import urllib2
 import feedparser
+from datetime import date
 
 HATENA_FEED_URL =  "http://b.hatena.ne.jp/user/rss?of="
 HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/"
 ACCESS_INTERVAL = 0.5
 START_FEED_ID = 0
-LAST_FEED_ID = 200
+#LAST_FEED_ID = 200
+LAST_FEED_ID = 20
 FEED_INTERVAL = 20
 
 class Feed:
@@ -71,19 +73,19 @@ class Feed:
         return l
 
     def save(self, urls, user_no):
-        global COLLECT_NO
         #f = open("./long_urls.txt", "a")
         collect_no = 1
         for url in urls:
             #if self.__is_long_url(url):
             #    f.write("%s\n" % (url))
             #    continue
-            is_register = self.__is_register(url)
-            if is_register:
-                self.__update_recomend_time(url)
-                continue
-            self.__append_url(url, user_no)
-            COLLECT_NO += 1
+            print(url)
+            #is_register = self.__is_register(url)
+            #if is_register:
+            #    self.__update_recomend_time(url)
+            #    continue
+            self.__append_url(url, user_no, collect_no)
+            collect_no += 1
         #f.close()
     
     # change database setting
@@ -113,13 +115,26 @@ class Feed:
                     url))
         self.conn.updateRecords(sql)
 
-    def __append_url(self, url, user_no):
+    def __append_url(self, url, user_no, c_no):
         sql =  ("insert into recomend_feed( "
                 "  url, collect_day, collect_no, user_no) "
                 "values ('%s', '%s', '%s', '%s'); " % (
                     url,
                     date.today().strftime("%Y%m%d"),
-                    COLLECT_NO,
+                    c_no,
                     user_no)
                 )
-        self.conn.insertRecord(sql)
+        #from sqlalchemy.orm import sessionmaker
+        from sqlalchemy import MetaData
+        from sqlalchemy import Table
+        md = MetaData(self.engine)
+        table = Table('recomend_feed', md, autoload=True)
+        upd = table.insert().values(url=url,
+                                    collect_day=date.today().strftime("%Y%m%d"),
+                                    collect_no=c_no,
+                                    user_no=user_no)
+        #print(str(upd))
+        c = self.engine.connect()
+        result = c.execute(upd)
+        print(result)
+        #self.engine.insertRecord(sql)

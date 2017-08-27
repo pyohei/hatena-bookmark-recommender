@@ -15,9 +15,9 @@ ACCESS_INTERVAL = 0.5
 
 class User:
 
-    def __init__(self, conn, urls):
+    def __init__(self, engine, urls):
         # call twice, so in vain
-        self.conn = conn
+        self.engine = engine 
         self.opener = urllib2.build_opener()
         self.urls = urls
         self.interval = ACCESS_INTERVAL

@@ -12,7 +12,7 @@ This module can collect recomend urls of specify hatena user.
 ##  from lib.dbConnector import DbConnector
 #from hatena.mybook import Mybook
 from hatena.feed import Feed
-#from hatena.user import User
+from hatena.user import User
 #from hatena.recommend import Recommend
 #import sys
 #from datetime import date
@@ -30,25 +30,27 @@ def main(user):
     #conn = DbConnector(CONNECTION)
     print "--- start ---"
     f = Feed(engine, user)
-    print "--- Finish ---"
     urls = f.load()
     print(urls)
-    
-    """
-    mb = Mybook(_connectDb())
+    f.save(urls, 1)
+
+    #mb = Mybook(_connectDb())
     #mb.register(urls)
 
-    if not is_all:
-        urls = mb.select_urls(is_all=False)
-    else:
-        urls = mb.select_urls()
+    #if not is_all:
+    #    urls = mb.select_urls(is_all=False)
+    #else:
+    #    urls = mb.select_urls()
     print "success!"
     # Gather users reading my feed.
     print "Explore Bookmark users"
-    b = User(conn, urls)
+    print "--- Finish ---"
+    b = User(engine, urls)
     users = b.extract()
     b.save(users)
+    print "--- Finish ---"
 
+    """
     # Load feed data of my reading feed users
     for user in users:
         user_no = b.load_user_no(user)
