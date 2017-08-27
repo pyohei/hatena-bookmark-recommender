@@ -6,34 +6,33 @@
 This module can collect recomend urls of specify hatena user.
 """
 
-import feedparser
-import json
-import time
-from lib.dbConnector import DbConnector
-from hatena.mybook import Mybook
-from hatena.feed import Feed
-from hatena.user import User
-from hatena.recommend import Recommend
-import sys
-from datetime import date
+#import feedparser
+#import json
+#import time
+##  from lib.dbConnector import DbConnector
+#from hatena.mybook import Mybook
+##  from hatena.feed import Feed
+#from hatena.user import User
+#from hatena.recommend import Recommend
+#import sys
+#from datetime import date
 
-import MySQLdb
-
-CONNECTION = MySQLdb.connect(
-  host = '',
-  db = 'hatena',
-  user = '',
-  passwd = '')
 
 COLLECT_NO = 1
 
-def main(is_all=False):
+ENGINE = 'sqlite:///hatena.db'
 
+def main(user):
+
+    """
     # Get my feed infomation.
     conn = DbConnector(CONNECTION)
     print "--- start ---"
     f = Feed(conn)
     urls = f.load()
+    print(urls)
+    
+    print "--- Finish ---"
     mb = Mybook(_connectDb())
     #mb.register(urls)
 
@@ -60,7 +59,12 @@ def main(is_all=False):
     r = Recommend(conn)
     recs = r.select()
     print "--- end ---"
+    """
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-u', '--user', required=True, help='User name')
+    args = parser.parse_args()
+    main(args.user)
 
