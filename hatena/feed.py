@@ -76,9 +76,10 @@ class Feed:
         #f = open("./long_urls.txt", "a")
         collect_no = 1
         for url in urls:
-            #if self.__is_long_url(url):
-            #    f.write("%s\n" % (url))
-            #    continue
+            if self._is_long_url(url):
+                print('Url exceeds 255')
+                #f.write("%s\n" % (url))
+                continue
             print(url)
             #is_register = self.__is_register(url)
             #if is_register:
@@ -89,7 +90,7 @@ class Feed:
         #f.close()
     
     # change database setting
-    def __is_long_url(self, url):
+    def _is_long_url(self, url):
         l = len(url)
         if l > 255:
             return True
@@ -116,25 +117,25 @@ class Feed:
         self.conn.updateRecords(sql)
 
     def __append_url(self, url, user_no, c_no):
-        sql =  ("insert into recomend_feed( "
-                "  url, collect_day, collect_no, user_no) "
-                "values ('%s', '%s', '%s', '%s'); " % (
-                    url,
-                    date.today().strftime("%Y%m%d"),
-                    c_no,
-                    user_no)
-                )
+        #sql =  ("insert into recomend_feed( "
+        #        "  url, collect_day, collect_no, user_no) "
+        #        "values ('%s', '%s', '%s', '%s'); " % (
+        #            url,
+        #            date.today().strftime("%Y%m%d"),
+        #            c_no,
+        #            user_no)
+        #        )
         #from sqlalchemy.orm import sessionmaker
         from sqlalchemy import MetaData
         from sqlalchemy import Table
         md = MetaData(self.engine)
         table = Table('recomend_feed', md, autoload=True)
-        upd = table.insert().values(url=url,
-                                    collect_day=date.today().strftime("%Y%m%d"),
-                                    collect_no=c_no,
-                                    user_no=user_no)
+        v = table.insert().values(url=url,
+                                  collect_day=date.today().strftime("%Y%m%d"),
+                                  collect_no=c_no,
+                                  user_no=user_no)
         #print(str(upd))
         c = self.engine.connect()
-        result = c.execute(upd)
+        result = c.execute(v)
         print(result)
         #self.engine.insertRecord(sql)

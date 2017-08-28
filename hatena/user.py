@@ -38,7 +38,8 @@ class User:
                 if "user" not in bookmark:
                     continue
                 users.append(bookmark["user"])
-            time.sleep(self.interval)
+            #time.sleep(self.interval)
+            time.sleep(1)
         return users
 
     def __make_url(self, target):
