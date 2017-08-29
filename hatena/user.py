@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 # -*- coding: utf-8 -*-
 
 """ User
@@ -9,8 +8,8 @@ import urllib2
 import time
 import json
 from datetime import date
-from sqlalchemy import MetaData
-from sqlalchemy import Table
+#from sqlalchemy import MetaData
+#from sqlalchemy import Table
 
 HATENA_FEED_URL =  "http://b.hatena.ne.jp/user/rss?of="
 HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/"
@@ -75,7 +74,6 @@ class User:
         #records = self.conn.fetchRecords(sql)
         print '----->'
         print recs
-        #if recs:
         # TODO: Fix
         for r in recs:
             return True
@@ -86,7 +84,6 @@ class User:
                 "set recomend_times = recomend_times + 1 "
                 "where user_name = '%s' ;" % (
                     user))
-        #self.conn.updateRecords(sql)
         print('hi2')
         c = self.engine.connect()
         c.execute(sql)
@@ -98,8 +95,6 @@ class User:
                     user,
                     date.today().strftime("%Y%m%d"))
                 )
-        #self.conn.insertRecord(sql)
-        #sys.exit(0)
         print(sql)
         c = self.engine.connect()
         c.execute(sql)
@@ -111,7 +106,6 @@ class User:
                 "where user_name = '%s' ;" % (
                     user)
                 )
-        #records = self.conn.fetchRecords(sql)
         c = self.engine.connect()
         recs = c.execute(sql)
         if len(recs) > 1:

@@ -8,7 +8,7 @@ This module can collect recomend urls of specify hatena user.
 
 #import feedparser
 #import json
-#import time
+import time
 ##  from lib.dbConnector import DbConnector
 #from hatena.mybook import Mybook
 from hatena.feed import Feed
@@ -20,7 +20,6 @@ from sqlalchemy import create_engine
 
 
 COLLECT_NO = 1
-
 ENGINE = 'sqlite:///hatena.db'
 
 def main(user):
@@ -50,16 +49,17 @@ def main(user):
     b.save(users)
     print "--- Finish ---"
 
-    """
     # Load feed data of my reading feed users
     for user in users:
         user_no = b.load_user_no(user)
         if not user_no:
             continue
-        recFeed = Feed(conn, user)    # this constract is so vain...
+        recFeed = Feed(ENGINE, user)    # this constract is so vain...
         urls = recFeed.load()
         recFeed.save(urls, user_no)
-        time.sleep(0.5)
+        time.sleep(1)
+        break
+    """
     r = Recommend(conn)
     recs = r.select()
     print "--- end ---"
