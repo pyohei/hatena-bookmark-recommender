@@ -8,6 +8,9 @@
 import urllib2
 import time
 import json
+from datetime import date
+from sqlalchemy import MetaData
+from sqlalchemy import Table
 
 HATENA_FEED_URL =  "http://b.hatena.ne.jp/user/rss?of="
 HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/"
@@ -40,6 +43,8 @@ class User:
                 users.append(bookmark["user"])
             #time.sleep(self.interval)
             time.sleep(1)
+            ### TEST
+            break
         return users
 
     def __make_url(self, target):
@@ -52,6 +57,7 @@ class User:
     def save(self, users):
         for user in users:
             is_register = self.__is_register(user)
+            print('{} -- {}'.format(user, str(is_register)))
             if is_register:
                 self.__update_recomend_time(user)
                 continue
@@ -63,8 +69,15 @@ class User:
                 "where user_name = '%s'; " % (
                     user)
                 )
-        records = self.conn.fetchRecords(sql)
-        if records:
+        c = self.engine.connect()
+        print('hi')
+        recs = c.execute(sql)
+        #records = self.conn.fetchRecords(sql)
+        print '----->'
+        print recs
+        #if recs:
+        # TODO: Fix
+        for r in recs:
             return True
         return False
 
@@ -73,7 +86,10 @@ class User:
                 "set recomend_times = recomend_times + 1 "
                 "where user_name = '%s' ;" % (
                     user))
-        self.conn.updateRecords(sql)
+        #self.conn.updateRecords(sql)
+        print('hi2')
+        c = self.engine.connect()
+        c.execute(sql)
 
     def __append_user(self, user):
         sql =  ("insert into users( "
@@ -82,8 +98,12 @@ class User:
                     user,
                     date.today().strftime("%Y%m%d"))
                 )
-        self.conn.insertRecord(sql)
+        #self.conn.insertRecord(sql)
         #sys.exit(0)
+        print(sql)
+        c = self.engine.connect()
+        c.execute(sql)
+        
 
     def load_user_no(self, user):
         sql =  ("select user_no "
@@ -91,10 +111,12 @@ class User:
                 "where user_name = '%s' ;" % (
                     user)
                 )
-        records = self.conn.fetchRecords(sql)
-        if len(records) > 1:
+        #records = self.conn.fetchRecords(sql)
+        c = self.engine.connect()
+        recs = c.execute(sql)
+        if len(recs) > 1:
             raise
-        if not records:
+        if not recs:
             return None
-        record = records[0]
+        record = recs[0]
         return record["user_no"]
