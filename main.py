@@ -13,7 +13,7 @@ import time
 #from hatena.mybook import Mybook
 from hatena.feed import Feed
 from hatena.user import User
-#from hatena.recommend import Recommend
+from hatena.recomend import Recommend
 #import sys
 #from datetime import date
 from sqlalchemy import create_engine
@@ -54,16 +54,16 @@ def main(user):
         user_no = b.load_user_no(user)
         if not user_no:
             continue
-        recFeed = Feed(ENGINE, user)    # this constract is so vain...
+        recFeed = Feed(engine, user)    # this constract is so vain...
         urls = recFeed.load()
         recFeed.save(urls, user_no)
         time.sleep(1)
         break
-    """
-    r = Recommend(conn)
+    r = Recommend(engine)
     recs = r.select()
+    for r in recs:
+        print(r)
     print "--- end ---"
-    """
 
 if __name__ == "__main__":
     import argparse

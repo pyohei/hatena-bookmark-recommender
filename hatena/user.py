@@ -108,9 +108,8 @@ class User:
                 )
         c = self.engine.connect()
         recs = c.execute(sql)
-        if len(recs) > 1:
-            raise
-        if not recs:
-            return None
-        record = recs[0]
-        return record["user_no"]
+        #if len(recs) > 1:
+        #    raise
+        for r in recs:
+            return r["user_no"]
+        return None

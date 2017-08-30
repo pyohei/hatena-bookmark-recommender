@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 # -*- coding: utf-8 -*-
 
 """ Recommend Selector
@@ -8,19 +7,18 @@ Select recommend data from database
 """
 
 
-
 class Recommend(object):
 
-    def __init__(self, conn):
-        self.conn = conn
+    def __init__(self, engine):
+        self.engine = engine
 
     def select(self):
         rank_urls = []
         recs = self.__load_top()
         for rec in recs:
-            if self.__is_mybookmark(rec["url"]):
-                print "oooooooooooppppppps"
-                continue
+            #if self._is_mybookmark(rec["url"]):
+            #    print "oooooooooooppppppps"
+            #    continue
             rank_urls.append(rec["url"])
         return rank_urls
 
@@ -29,15 +27,15 @@ class Recommend(object):
             "FROM recomend_feed "
             "ORDER BY recomend_times "
             "LIMIT %s " % num )
-        recs = self.conn.fetchRecords(sql)
-        return recs
+        c = self.engine.connect()
+        return c.execute(sql)
 
-    def __is_mybookmark(self, url):
+    def _is_mybookmark(self, url):
         sql = ("SELECT * "
             "FROM my_bookmarks "
             "WHERE url = '%s'; " % (url))
-        recs = self.conn.fetchRecords(sql)
-        return recs
+        c = self.engine.connect()
+        return c.execute(sql)
 
 if __name__ == "__main__":
     # --- Path settings ---- "
