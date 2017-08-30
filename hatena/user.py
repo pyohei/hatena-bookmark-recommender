@@ -58,9 +58,9 @@ class User:
             is_register = self.__is_register(user)
             print('{} -- {}'.format(user, str(is_register)))
             if is_register:
-                self.__update_recomend_time(user)
+                self._update_recomend_time(user)
                 continue
-            self.__append_user(user)
+            self._append_user(user)
 
     def __is_register(self, user):
         sql = ("select * "
@@ -79,7 +79,7 @@ class User:
             return True
         return False
 
-    def __update_recomend_time(self, user):
+    def _update_recomend_time(self, user):
         sql =  ("update users "
                 "set recomend_times = recomend_times + 1 "
                 "where user_name = '%s' ;" % (
@@ -88,7 +88,7 @@ class User:
         c = self.engine.connect()
         c.execute(sql)
 
-    def __append_user(self, user):
+    def _append_user(self, user):
         sql =  ("insert into users( "
                 "  user_name, register_datetime) "
                 "values ('%s', '%s'); " % (
