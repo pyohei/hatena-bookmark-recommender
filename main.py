@@ -1,9 +1,8 @@
-#!/usr/local/bin/python
-# -*- coding: utf-8 -*-
+"""Hatena bookmark recommender.
 
-"""handler of hatena api
-
-This module can collect recomend urls of specify hatena user.
+This script create articles which you have interested .
+The ingredient of script is Hatena user. After you give your hatena user name, this script
+create your interested articles.
 """
 
 import time
@@ -18,9 +17,21 @@ COLLECT_NO = 1
 ENGINE = 'sqlite:///hatena.db'
 
 def main(user):
+    """Main script.
+
+    The outline of this script is the below.
+      - Fetch your bookmarked urls
+      - Search users from the urls 
+      - Search bookmarked urls of its users
+      - Recommend url from all bookmarked urls
+
+    The target user can direct from argument.
+      
+      python main.py -u xxxxx
+
+    """
     engine = create_engine(ENGINE)
 
-    print "--- start ---"
     f = Feed(engine, user)
     urls = f.load()
     print(urls)
@@ -36,7 +47,6 @@ def main(user):
     print "success!"
     # Gather users reading my feed.
     print "Explore Bookmark users"
-    print "--- Finish ---"
     b = User(engine, urls)
     users = b.extract()
     b.save(users)
@@ -64,4 +74,3 @@ if __name__ == "__main__":
     parser.add_argument('-u', '--user', required=True, help='User name')
     args = parser.parse_args()
     main(args.user)
-
