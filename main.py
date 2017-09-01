@@ -3,10 +3,16 @@
 This script create articles which you have interested .
 The ingredient of script is Hatena user. After you give your hatena user name, this script
 create your interested articles.
+
+Usage:
+    The target user can direct from argument.
+
+      python main.py -u xxxxx
+
 """
 
 import time
-#from hatena.mybook import Mybook
+from hatena.mybook import Mybook
 from hatena.feed import Feed
 from hatena.user import User
 from hatena.recomend import Recommend
@@ -25,10 +31,6 @@ def main(user):
       - Search bookmarked urls of its users
       - Recommend url from all bookmarked urls
 
-    The target user can direct from argument.
-      
-      python main.py -u xxxxx
-
     """
     engine = create_engine(ENGINE)
 
@@ -37,16 +39,9 @@ def main(user):
     print(urls)
     f.save(urls, 1)
 
-    #mb = Mybook(_connectDb())
-    #mb.register(urls)
+    mb = Mybook(engine)
+    mb.register(urls)
 
-    #if not is_all:
-    #    urls = mb.select_urls(is_all=False)
-    #else:
-    #    urls = mb.select_urls()
-    print "success!"
-    # Gather users reading my feed.
-    print "Explore Bookmark users"
     b = User(engine, urls)
     users = b.extract()
     b.save(users)

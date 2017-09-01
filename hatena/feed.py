@@ -1,6 +1,3 @@
-#!/usr/local/bin/python
-# -*- coding: utf-8 -*-
-
 """ Feed 
 
 """
@@ -81,11 +78,11 @@ class Feed:
                 #f.write("%s\n" % (url))
                 continue
             print(url)
-            #is_register = self.__is_register(url)
-            #if is_register:
-            #    self.__update_recomend_time(url)
-            #    continue
-            self.__append_url(url, user_no, collect_no)
+            is_register = self._is_register(url)
+            if is_register:
+                self._update_recomend_time(url)
+                continue
+            self._append_url(url, user_no, collect_no)
             collect_no += 1
         #f.close()
     
@@ -96,7 +93,7 @@ class Feed:
             return True
         return False
 
-    def __is_register(self, user):
+    def _is_register(self, user):
         sql = ("select * "
                 "from recomend_feed "
                 "where url = '%s' "
@@ -104,19 +101,21 @@ class Feed:
                     user,
                     date.today().strftime("%Y%m%d"))
                 )
-        records = self.conn.fetchRecords(sql)
-        if records:
+        c = self.engine.connect()
+        records = c.execute(sql)
+        for r in records:
             return True
         return False
 
-    def __update_recomend_time(self, url):
+    def _update_recomend_time(self, url):
         sql =  ("update recomend_feed "
                 "set recomend_times = recomend_times + 1 "
                 "where url = '%s' ;" % (
                     url))
-        self.conn.updateRecords(sql)
+        c = self.engine.connect()
+        c.execute(sql)
 
-    def __append_url(self, url, user_no, c_no):
+    def _append_url(self, url, user_no, c_no):
         #sql =  ("insert into recomend_feed( "
         #        "  url, collect_day, collect_no, user_no) "
         #        "values ('%s', '%s', '%s', '%s'); " % (
@@ -134,8 +133,6 @@ class Feed:
                                   collect_day=date.today().strftime("%Y%m%d"),
                                   collect_no=c_no,
                                   user_no=user_no)
-        #print(str(upd))
         c = self.engine.connect()
         result = c.execute(v)
         print(result)
-        #self.engine.insertRecord(sql)
