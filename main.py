@@ -19,8 +19,8 @@ from hatena.recomend import Recommend
 from sqlalchemy import create_engine
 
 
-COLLECT_NO = 1
 ENGINE = 'sqlite:///hatena.db'
+
 
 def main(user):
     """Main script.
