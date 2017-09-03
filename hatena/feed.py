@@ -3,7 +3,7 @@ import urllib2
 import feedparser
 from datetime import date
 
-HATENA_FEED_URL =  "http://b.hatena.ne.jp/user/rss?of="
+HATENA_FEED_URL =  "http://b.hatena.ne.jp/{user}/rss?of={no}"
 START_FEED_ID = 0
 #LAST_FEED_ID = 200
 LAST_FEED_ID = 20
@@ -30,7 +30,7 @@ class Feed:
 
         for i in range(start, end, interval):
             print "Feed no: From %s To %s" % (i, i+interval)
-            url = self._make_url(i)
+            url = self._make_feed_api_url(i)
             try:
                 response = self.opener.open(url)
             except:
@@ -47,9 +47,9 @@ class Feed:
                 pass
         return urls
 
-    def _make_url(self, id):
-        u = HATENA_FEED_URL.replace("user", self.user)
-        return u + str(id)
+    def _make_feed_api_url(self, id):
+        """Create api url of rss feed."""
+        return HATENA_FEED_URL.format(user=self.user, no=str(id))
 
     def _parse_feed(self, response):
         c = response.read()
