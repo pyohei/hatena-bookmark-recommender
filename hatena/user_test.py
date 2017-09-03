@@ -7,7 +7,7 @@ class TestUser(unittest.TestCase):
     def setUp(self):
         engine = create_engine('sqlite:///:memory:')
         self.target_url = 'http://www.hatena.ne.jp/'
-        self.obj = user.User(engine, ['http://www.test'])
+        self.obj = user.User(engine, [self.target_url])
         def _create_test_data():
             """Create database for test.
 
@@ -71,6 +71,14 @@ class TestUser(unittest.TestCase):
         self.assertEqual(self.obj.load_user_no('test'), 1)
         self.obj._append_user('hoge')
         self.assertEqual(self.obj.load_user_no('hoge'), 2)
+
+    def test_extract(self):
+        """Test extract user data"""
+        # Success pattern.
+        self.assertIsInstance(self.obj.extract()[0], unicode)
+        # NG pattern.
+        self.obj.urls = ['http://www.hatena.ne.j']
+        self.assertEqual(self.obj.extract(), [])
 
 if __name__ == '__main__':
     unittest.main()

@@ -12,9 +12,9 @@ HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/?url={url}"
 ACCESS_INTERVAL = 0.5
 
 class User:
+    """Bookmark user class."""
 
     def __init__(self, engine, urls):
-        # call twice, so in vain
         self.engine = engine 
         self.urls = urls
         self.interval = ACCESS_INTERVAL
@@ -26,12 +26,12 @@ class User:
         for feedurl in self.urls:
             print "target url: %s" % (feedurl)
             url = self._make_entry_api_url(feedurl)
-            f = self._request(url)
-            # Don't examine patterns not "bookamark" keys
-            print(f)
-            if "bookmarks" not in f:
+            result = self._request(url)
+            if not result:
                 continue
-            for bookmark in f["bookmarks"]:
+            if "bookmarks" not in result:
+                continue
+            for bookmark in result["bookmarks"]:
                 #users.append([url[0], bookmark["user"]])
                 if "user" not in bookmark:
                     continue
