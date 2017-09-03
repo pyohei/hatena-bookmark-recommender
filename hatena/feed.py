@@ -1,14 +1,9 @@
-""" Feed 
-
-"""
-
+"""Feed operation class."""
 import urllib2
 import feedparser
 from datetime import date
 
 HATENA_FEED_URL =  "http://b.hatena.ne.jp/user/rss?of="
-HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/"
-ACCESS_INTERVAL = 0.5
 START_FEED_ID = 0
 #LAST_FEED_ID = 200
 LAST_FEED_ID = 20
@@ -19,7 +14,7 @@ class Feed:
     def __init__(self, engine, user):
         self.engine = engine
         self.opener = urllib2.build_opener()
-        self.interval = ACCESS_INTERVAL
+        self.interval = 0.5
         # set user name
         # user name on conf had better set in main module
         # or make new define like 'set_hatenaid'
@@ -46,8 +41,7 @@ class Feed:
             urls += self._process_entry(feed)
             try:
                 import time
-                #time.sleep(self.interval)
-                time.sleep(1)
+                time.sleep(self.interval)
                 print("....")
             except:
                 pass
