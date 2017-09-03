@@ -72,6 +72,7 @@ class User:
 
     def _update_recommend_time(self, user):
         """Update recommended user count."""
+        self.md.clear()
         t = Table('users', self.md, autoload=True)
         w = "user_name = '{}'".format(user)
         u = update(t).where(w).values(recomend_times=t.c.recomend_times+1)
@@ -79,21 +80,16 @@ class User:
 
     def _append_user(self, user):
         """Add new recommend user."""
+        self.md.clear()
         t = Table('users', self.md, autoload=True)
         i = insert(t).values(user_name=user,
                              register_datetime=date.today())
         i.execute()
 
     def load_user_no(self, user):
-        sql =  ("select user_no "
-                "from users "
-                "where user_name = '%s' ;" % (
-                    user)
-                )
-        c = self.engine.connect()
-        recs = c.execute(sql)
-        #if len(recs) > 1:
-        #    raise
-        for r in recs:
-            return r["user_no"]
-        return None
+        """Load user_no."""
+        self.md.clear()
+        t = Table('users', self.md, auto_load=True)
+        w = "user_name = '{}'".format(user)
+        s = select(columns=['user_no'], from_obj=t).where(w)
+        return s.execute().fetchone()['user_no']

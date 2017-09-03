@@ -67,5 +67,10 @@ class TestUser(unittest.TestCase):
         self.obj._append_user('hoge')
         self.assertTrue(self.obj._is_register('hoge'))
 
+    def test_load_user_no(self):
+        self.assertEqual(self.obj.load_user_no('test'), 1)
+        self.obj._append_user('hoge')
+        self.assertEqual(self.obj.load_user_no('hoge'), 2)
+
 if __name__ == '__main__':
     unittest.main()
