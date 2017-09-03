@@ -51,6 +51,7 @@ class User:
         return requests.get(url).json()
 
     def save(self, users):
+        # TDOD: No test code.
         for user in users:
             is_register = self._is_register(user)
             print('{} -- {}'.format(user, str(is_register)))
