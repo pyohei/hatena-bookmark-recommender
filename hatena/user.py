@@ -1,5 +1,6 @@
 """Bookmark user class"""
 
+import logging
 import urllib
 import time
 from datetime import date
@@ -15,31 +16,28 @@ class User:
     """Bookmark user class."""
 
     def __init__(self, engine, urls):
+        logging.basicConfig(level=20)
         self.engine = engine 
         self.urls = urls
         self.interval = ACCESS_INTERVAL
         self.md = MetaData(self.engine)
+        self.sleep_sec = 1
 
     def extract(self):
-        print "BookmarkUser extract"
+        """Extract bookmarked users from setted url."""
         users = []
         for feedurl in self.urls:
-            print "target url: %s" % (feedurl)
-            url = self._make_entry_api_url(feedurl)
-            result = self._request(url)
+            logging.info('URL:{}'.format(feedurl))
+            api_url = self._make_entry_api_url(feedurl)
+            result = self._request(api_url)
             if not result:
                 continue
-            if "bookmarks" not in result:
-                continue
-            for bookmark in result["bookmarks"]:
-                #users.append([url[0], bookmark["user"]])
-                if "user" not in bookmark:
+            for b in result.get('bookmarks', []):
+                if "user" not in b:
                     continue
-                users.append(bookmark["user"])
-            #time.sleep(self.interval)
-            time.sleep(1)
-            ### TEST
-            break
+                # TODO: Ignore myself.
+                users.append(b["user"])
+            time.sleep(self.sleep_sec)
         return users
 
     def _make_entry_api_url(self, url):
