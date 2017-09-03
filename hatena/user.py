@@ -5,7 +5,7 @@ import time
 from datetime import date
 from sqlalchemy import MetaData
 from sqlalchemy import Table
-from sqlalchemy.sql import select,update#,insert
+from sqlalchemy.sql import select,update,insert
 import requests
 
 HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/?url={url}"
@@ -78,16 +78,11 @@ class User:
         u.execute()
 
     def _append_user(self, user):
-        sql =  ("insert into users( "
-                "  user_name, register_datetime) "
-                "values ('%s', '%s'); " % (
-                    user,
-                    date.today().strftime("%Y%m%d"))
-                )
-        print(sql)
-        c = self.engine.connect()
-        c.execute(sql)
-        
+        """Add new recommend user."""
+        t = Table('users', self.md, autoload=True)
+        i = insert(t).values(user_name=user,
+                             register_datetime=date.today())
+        i.execute()
 
     def load_user_no(self, user):
         sql =  ("select user_no "

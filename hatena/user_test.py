@@ -57,10 +57,15 @@ class TestUser(unittest.TestCase):
         self.assertFalse(self.obj._is_register('test2'))
 
     def test__update_recommend_times(self):
-        """Test existing target user."""
+        """Test update recommend times."""
         self.assertEqual(self.count_recommend_times(), 1)
         self.obj._update_recommend_time('test')
         self.assertEqual(self.count_recommend_times(), 2)
+
+    def test__append_user(self):
+        """Test append user."""
+        self.obj._append_user('hoge')
+        self.assertTrue(self.obj._is_register('hoge'))
 
 if __name__ == '__main__':
     unittest.main()
