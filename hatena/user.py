@@ -1,18 +1,15 @@
-# -*- coding: utf-8 -*-
-
-""" User
+"""User
 
 """
 
-import urllib2
+import urllib
 import time
-import json
 from datetime import date
+import requests
 #from sqlalchemy import MetaData
 #from sqlalchemy import Table
 
-HATENA_FEED_URL =  "http://b.hatena.ne.jp/user/rss?of="
-HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/"
+HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/?url={url}"
 ACCESS_INTERVAL = 0.5
 
 class User:
@@ -20,7 +17,6 @@ class User:
     def __init__(self, engine, urls):
         # call twice, so in vain
         self.engine = engine 
-        self.opener = urllib2.build_opener()
         self.urls = urls
         self.interval = ACCESS_INTERVAL
 
@@ -29,10 +25,10 @@ class User:
         users = []
         for feedurl in self.urls:
             print "target url: %s" % (feedurl)
-            url = self.__make_url(feedurl)
-            response = self.opener.open(url)
-            f = self.__parse(response)
+            url = self._make_entry_api_url(feedurl)
+            f = self._request(url)
             # Don't examine patterns not "bookamark" keys
+            print(f)
             if "bookmarks" not in f:
                 continue
             for bookmark in f["bookmarks"]:
@@ -46,12 +42,19 @@ class User:
             break
         return users
 
-    def __make_url(self, target):
-        return HATENA_ENTRY_URL + target
+    def _make_entry_api_url(self, url):
+        """Create hatena bookmark entry api url."""
+        e_url = urllib.quote(url, safe='')
+        return HATENA_ENTRY_URL.format(url=e_url)
 
-    def __parse(self, response):
-        c = response.read()
-        return json.loads(c)
+    def _request(self, url):
+        """Request api.
+        
+        Request argument url and return result data as dict.
+        """
+        #return self.opener.open(url)
+        #r = self.opener.open(url)
+        return requests.get(url).json()
 
     def save(self, users):
         for user in users:
