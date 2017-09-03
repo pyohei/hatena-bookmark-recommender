@@ -10,7 +10,6 @@ from sqlalchemy.sql import select,update,insert
 import requests
 
 HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/?url={url}"
-ACCESS_INTERVAL = 0.5
 
 class User:
     """Bookmark user class."""
@@ -19,7 +18,6 @@ class User:
         logging.basicConfig(level=20)
         self.engine = engine 
         self.urls = urls
-        self.interval = ACCESS_INTERVAL
         self.md = MetaData(self.engine)
         self.sleep_sec = 1
 
