@@ -5,7 +5,7 @@ import time
 from datetime import date
 from sqlalchemy import MetaData
 from sqlalchemy import Table
-from sqlalchemy.sql import select,update,insert
+from sqlalchemy.sql import select,update#,insert
 import requests
 
 HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/?url={url}"
@@ -52,8 +52,6 @@ class User:
         
         Request argument url and return result data as dict.
         """
-        #return self.opener.open(url)
-        #r = self.opener.open(url)
         return requests.get(url).json()
 
     def save(self, users):
@@ -66,22 +64,16 @@ class User:
             self._append_user(user)
 
     def _is_register(self, user):
+        """Check the user is already registered or not."""
         t = Table('users', self.md)
         w = "user_name = '{}'".format(user)
         s = select(columns=['user_name'], from_obj=t).where(w)
         return s.execute().scalar()
 
     def _update_recommend_time(self, user):
-        #sql =  ("update users "
-        #        "set recomend_times = recomend_times + 1 "
-        #        "where user_name = '%s' ;" % (
-        #            user))
-        #print('hi2')
-        #c = self.engine.connect()
-        #c.execute(sql)
+        """Update recommended user count."""
         t = Table('users', self.md, autoload=True)
         w = "user_name = '{}'".format(user)
-        #u = update(t).where(w).values(recomend_times='recomend_times+1')
         u = update(t).where(w).values(recomend_times=t.c.recomend_times+1)
         u.execute()
 
