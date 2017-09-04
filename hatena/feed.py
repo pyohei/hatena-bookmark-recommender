@@ -1,8 +1,8 @@
 """Feed operation class."""
-import urllib2
 import feedparser
 from datetime import date
 import requests
+import time
 
 HATENA_FEED_URL =  "http://b.hatena.ne.jp/{user}/rss?of={no}"
 START_FEED_ID = 0
@@ -14,7 +14,6 @@ class Feed:
 
     def __init__(self, engine, user):
         self.engine = engine
-        self.opener = urllib2.build_opener()
         self.interval = 0.5
         # set user name
         # user name on conf had better set in main module
@@ -32,21 +31,11 @@ class Feed:
         for i in range(start, end, interval):
             print "Feed no: From %s To %s" % (i, i+interval)
             url = self._make_feed_api_url(i)
-            #try:
-            #    response = self.opener.open(url)
-            #except:
-            #    continue
-            #feed = self._parse_feed(response)
             feed = self._request(url)
             if not feed["entries"]:
                 break
             urls += self._process_entry(feed)
-            try:
-                import time
-                time.sleep(self.interval)
-                print("....")
-            except:
-                pass
+            time.sleep(self.interval)
         return urls
 
     def _make_feed_api_url(self, id):
@@ -60,11 +49,6 @@ class Feed:
         """
         return feedparser.parse(requests.get(url).text)
 
-    def _parse_feed(self, response):
-        c = response.read()
-        p = feedparser.parse(c)
-        return p
-
     def _process_entry(self, feed):
         l = []
         for f in feed["entries"]:
@@ -73,12 +57,10 @@ class Feed:
         return l
 
     def save(self, urls, user_no):
-        #f = open("./long_urls.txt", "a")
         collect_no = 1
         for url in urls:
             if self._is_long_url(url):
                 print('Url exceeds 255')
-                #f.write("%s\n" % (url))
                 continue
             print(url)
             is_register = self._is_register(url)
