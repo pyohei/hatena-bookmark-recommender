@@ -29,5 +29,11 @@ class TestFeed(unittest.TestCase):
         r = self.obj._request(url)
         self.assertIsInstance(self.obj._process_entry(r), list)
 
+    def test__is_long_url(self):
+        """Test url is 255 byte."""
+        base = 'x' * 255
+        self.assertFalse(self.obj._is_long_url(base))
+        self.assertTrue(self.obj._is_long_url(base+'x'))
+
 if __name__ == '__main__':
     unittest.main()

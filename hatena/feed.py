@@ -71,12 +71,9 @@ class Feed:
             collect_no += 1
         #f.close()
     
-    # change database setting
     def _is_long_url(self, url):
-        l = len(url)
-        if l > 255:
-            return True
-        return False
+        """Check the url is over database column setting."""
+        return len(url) > 255
 
     def _is_register(self, user):
         sql = ("select * "
