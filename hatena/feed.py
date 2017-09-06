@@ -1,8 +1,13 @@
 """Feed operation class."""
-import feedparser
+
 from datetime import date
-import requests
 import time
+
+import feedparser
+import requests
+from sqlalchemy import MetaData
+from sqlalchemy import Table
+from sqlalchemy.sql import select
 
 HATENA_FEED_URL =  "http://b.hatena.ne.jp/{user}/rss?of={no}"
 START_FEED_ID = 0
@@ -14,6 +19,7 @@ class Feed:
 
     def __init__(self, engine, user):
         self.engine = engine
+        self.md = MetaData(self.engine)
         self.interval = 0.5
         # set user name
         # user name on conf had better set in main module
@@ -75,19 +81,25 @@ class Feed:
         """Check the url is over database column setting."""
         return len(url) > 255
 
-    def _is_register(self, user):
-        sql = ("select * "
-                "from recomend_feed "
-                "where url = '%s' "
-                " and  collect_day = '%s' ;"% (
-                    user,
-                    date.today().strftime("%Y%m%d"))
-                )
-        c = self.engine.connect()
-        records = c.execute(sql)
-        for r in records:
-            return True
-        return False
+    def _is_register(self, url):
+        """Check the url is already registered in the same day."""
+        t = Table('recomend_feed', self.md)
+        w = "url = '{}' and collect_day = '{}' ".format(url, date.today())
+        s = select(columns=['no'], from_obj=t).where(w)
+        return s.execute().scalar()
+
+        #sql = ("select * "
+        #        "from recomend_feed "
+        #        "where url = '%s' "
+        #        " and  collect_day = '%s' ;"% (
+        #            user,
+        #            date.today().strftime("%Y%m%d"))
+        #        )
+        #c = self.engine.connect()
+        #records = c.execute(sql)
+        #for r in records:
+        #    return True
+        #return False
 
     def _update_recomend_time(self, url):
         sql =  ("update recomend_feed "
@@ -107,8 +119,6 @@ class Feed:
         #            user_no)
         #        )
         #from sqlalchemy.orm import sessionmaker
-        from sqlalchemy import MetaData
-        from sqlalchemy import Table
         md = MetaData(self.engine)
         table = Table('recomend_feed', md, autoload=True)
         v = table.insert().values(url=url,
