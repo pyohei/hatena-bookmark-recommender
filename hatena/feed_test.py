@@ -1,4 +1,5 @@
 """Test of feed.py"""
+from datetime import date
 import unittest
 import feed
 from sqlalchemy import create_engine
@@ -15,21 +16,20 @@ class TestFeed(unittest.TestCase):
             """
             create_sql = """
                          CREATE TABLE `recomend_feed` (
-                           `no` INTEGER,
-                           `collect_day` int ( 10 ) NOT NULL UNIQUE,
-                           `collect_no` int ( 6 ) NOT NULL UNIQUE,
+                           `no` INTEGER PRIMARY KEY AUTOINCREMENT,
+                           `collect_day` int ( 10 ) NOT NULL,
+                           `collect_no` int ( 6 ) NOT NULL,
                            `url` text,
                            `recomend_times` int ( 5 ) DEFAULT 1,
                            `user_no` int ( 10 ),
                            `isAdapt` tinyint DEFAULT 0,
-                           `update_time` timestamp,
-                           PRIMARY KEY(`no`)
+                           `update_time` timestamp
                          );
                 """
             insert_sql = """
                 INSERT INTO `recomend_feed` (`no`, `collect_day`, `collect_no`, `url`, `user_no`)
-                VALUES (1, date('now'), 1, 'http://test', 1);
-                """
+                VALUES (1, {}, 1, 'http://test', 1);
+                """.format(date.today().strftime("%Y%m%d"))
             c = engine.connect()
             c.execute(create_sql)
             c.execute(insert_sql)
@@ -75,6 +75,14 @@ class TestFeed(unittest.TestCase):
         self.assertEqual(self.obj._load_recommend_time('http://test'), 1)
         self.obj._update_recomend_time('http://test')
         self.assertEqual(self.obj._load_recommend_time('http://test'), 2)
+
+    def test__append_url(self):
+        """Test append recommend url."""
+        url = 'http://hoge'
+        self.obj._append_url(url, 1, 2)
+        self.obj._update_recomend_time(url)
+        self.assertEqual(self.obj._load_recommend_time(url), 2)
+        self.assertTrue(self.obj._is_register(url))
 
 if __name__ == '__main__':
     unittest.main()

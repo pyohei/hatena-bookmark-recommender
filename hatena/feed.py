@@ -92,7 +92,8 @@ class Feed:
     def _is_register(self, url):
         """Check the url is already registered in the same day."""
         t = Table('recomend_feed', self.md)
-        w = "url = '{}' and collect_day = '{}' ".format(url, date.today())
+        w = "url = '{}' and collect_day = '{}' ".format(
+            url, int(date.today().strftime("%Y%m%d")))
         s = select(columns=['no'], from_obj=t).where(w)
         return s.execute().scalar()
 
@@ -105,19 +106,12 @@ class Feed:
         u.execute()
 
     def _append_url(self, url, user_no, c_no):
-        #sql =  ("insert into recomend_feed( "
-        #        "  url, collect_day, collect_no, user_no) "
-        #        "values ('%s', '%s', '%s', '%s'); " % (
-        #            url,
-        #            date.today().strftime("%Y%m%d"),
-        #            c_no,
-        #            user_no)
-        #        )
-        #from sqlalchemy.orm import sessionmaker
+        """Append new url."""
+        self.md.clear()
         md = MetaData(self.engine)
         table = Table('recomend_feed', md, autoload=True)
         v = table.insert().values(url=url,
-                                  collect_day=date.today().strftime("%Y%m%d"),
+                                  collect_day=int(date.today().strftime("%Y%m%d")),
                                   collect_no=c_no,
                                   user_no=user_no)
         c = self.engine.connect()
