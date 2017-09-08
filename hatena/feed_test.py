@@ -84,5 +84,11 @@ class TestFeed(unittest.TestCase):
         self.assertEqual(self.obj._load_recommend_time(url), 2)
         self.assertTrue(self.obj._is_register(url))
 
+    def test_load(self):
+        """Test load function."""
+        self.obj.user = 'sample'
+        self.assertNotEqual(self.obj.load(), [])
+        self.assertEqual(len(self.obj.load()), 17)
+
 if __name__ == '__main__':
     unittest.main()
