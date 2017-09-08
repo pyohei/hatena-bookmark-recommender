@@ -66,5 +66,15 @@ class TestFeed(unittest.TestCase):
         self.assertTrue(self.obj._is_register('http://test'))
         self.assertFalse(self.obj._is_register('test2'))
 
+    def test__load_recomend_time(self):
+        """Test load recommend times."""
+        self.assertEqual(self.obj._load_recommend_time('http://test'), 1)
+
+    def test__update_recomend_time(self):
+        """Test update recommend times."""
+        self.assertEqual(self.obj._load_recommend_time('http://test'), 1)
+        self.obj._update_recomend_time('http://test')
+        self.assertEqual(self.obj._load_recommend_time('http://test'), 2)
+
 if __name__ == '__main__':
     unittest.main()

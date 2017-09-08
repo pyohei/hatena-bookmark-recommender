@@ -7,7 +7,7 @@ import feedparser
 import requests
 from sqlalchemy import MetaData
 from sqlalchemy import Table
-from sqlalchemy.sql import select
+from sqlalchemy.sql import select, update
 
 HATENA_FEED_URL =  "http://b.hatena.ne.jp/{user}/rss?of={no}"
 START_FEED_ID = 0
@@ -81,6 +81,14 @@ class Feed:
         """Check the url is over database column setting."""
         return len(url) > 255
 
+    def _load_recommend_time(self, url):
+        """Load recommend time."""
+        self.md.clear()
+        t = Table('recomend_feed', self.md, auto_load=True)
+        w = "url = '{}'".format(url)
+        s = select(columns=['recomend_times'], from_obj=t).where(w)
+        return s.execute().fetchone()['recomend_times']
+
     def _is_register(self, url):
         """Check the url is already registered in the same day."""
         t = Table('recomend_feed', self.md)
@@ -89,12 +97,12 @@ class Feed:
         return s.execute().scalar()
 
     def _update_recomend_time(self, url):
-        sql =  ("update recomend_feed "
-                "set recomend_times = recomend_times + 1 "
-                "where url = '%s' ;" % (
-                    url))
-        c = self.engine.connect()
-        c.execute(sql)
+        """Update recommended user count."""
+        self.md.clear()
+        t = Table('recomend_feed', self.md, autoload=True)
+        w = "url = '{}'".format(url)
+        u = update(t).where(w).values(recomend_times=t.c.recomend_times+1)
+        u.execute()
 
     def _append_url(self, url, user_no, c_no):
         #sql =  ("insert into recomend_feed( "
