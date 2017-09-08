@@ -88,19 +88,6 @@ class Feed:
         s = select(columns=['no'], from_obj=t).where(w)
         return s.execute().scalar()
 
-        #sql = ("select * "
-        #        "from recomend_feed "
-        #        "where url = '%s' "
-        #        " and  collect_day = '%s' ;"% (
-        #            user,
-        #            date.today().strftime("%Y%m%d"))
-        #        )
-        #c = self.engine.connect()
-        #records = c.execute(sql)
-        #for r in records:
-        #    return True
-        #return False
-
     def _update_recomend_time(self, url):
         sql =  ("update recomend_feed "
                 "set recomend_times = recomend_times + 1 "
@@ -126,5 +113,4 @@ class Feed:
                                   collect_no=c_no,
                                   user_no=user_no)
         c = self.engine.connect()
-        result = c.execute(v)
-        print(result)
+        c.execute(v)
