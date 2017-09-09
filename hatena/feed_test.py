@@ -92,6 +92,10 @@ class TestFeed(unittest.TestCase):
 
     def test_save(self):
         """Test save function."""
+        urls = ['http://foo', 'http://bar']
+        self.obj.save(urls, 9)
+        for u in urls:
+            self.assertTrue(self.obj._is_register(u))
 
 if __name__ == '__main__':
     unittest.main()

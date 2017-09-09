@@ -11,6 +11,7 @@ from sqlalchemy import Table
 from sqlalchemy.sql import select, update
 
 HATENA_FEED_URL =  "http://b.hatena.ne.jp/{user}/rss?of={no}"
+# TODO: Change these parameters into argument.
 START_FEED_ID = 0
 #LAST_FEED_ID = 200
 LAST_FEED_ID = 20
@@ -63,19 +64,18 @@ class Feed:
         return l
 
     def save(self, urls, user_no):
+        """Save url."""
         collect_no = 1
         for url in urls:
             if self._is_long_url(url):
-                print('Url exceeds 255')
+                logging.info("Url exceeds 255{}.".format(url))
                 continue
-            print(url)
             is_register = self._is_register(url)
             if is_register:
                 self._update_recomend_time(url)
                 continue
             self._append_url(url, user_no, collect_no)
             collect_no += 1
-        #f.close()
     
     def _is_long_url(self, url):
         """Check the url is over database column setting."""
