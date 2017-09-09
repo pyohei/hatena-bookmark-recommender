@@ -90,5 +90,8 @@ class TestFeed(unittest.TestCase):
         self.assertNotEqual(self.obj.load(), [])
         self.assertEqual(len(self.obj.load()), 17)
 
+    def test_save(self):
+        """Test save function."""
+
 if __name__ == '__main__':
     unittest.main()

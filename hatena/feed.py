@@ -1,6 +1,7 @@
 """Feed operation class."""
 
 from datetime import date
+import logging
 import time
 
 import feedparser
@@ -13,7 +14,6 @@ HATENA_FEED_URL =  "http://b.hatena.ne.jp/{user}/rss?of={no}"
 START_FEED_ID = 0
 #LAST_FEED_ID = 200
 LAST_FEED_ID = 20
-FEED_INTERVAL = 20
 
 class Feed:
 
@@ -27,15 +27,15 @@ class Feed:
         self.user = user
 
     def load(self):
-        print "User: %s " % (self.user)
+        """Load feed info."""
+        interval = 20 # API default setting.
+        logging.info('User: {}'.format(self.user))
         urls = []
-        # num = 0
         start = START_FEED_ID
         end = LAST_FEED_ID
-        interval = FEED_INTERVAL
 
         for i in range(start, end, interval):
-            print "Feed no: From %s To %s" % (i, i+interval)
+            logging.info('Feed {} - {}'.format(i, i+interval))
             url = self._make_feed_api_url(i)
             feed = self._request(url)
             if not feed["entries"]:
