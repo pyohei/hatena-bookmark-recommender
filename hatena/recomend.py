@@ -11,7 +11,7 @@ class Recommend(object):
 
     def select(self):
         rank_urls = []
-        recs = self.__load_top()
+        recs = self._load_top()
         for rec in recs:
             #if self._is_mybookmark(rec["url"]):
             #    print "oooooooooooppppppps"
@@ -19,7 +19,7 @@ class Recommend(object):
             rank_urls.append(rec["url"])
         return rank_urls
 
-    def __load_top(self, num=100):
+    def _load_top(self, num=100):
         sql = ("SELECT * "
             "FROM recomend_feed "
             "ORDER BY recomend_times "
