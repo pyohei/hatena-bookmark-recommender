@@ -63,7 +63,7 @@ class TestRecommend(unittest.TestCase):
         self.assertEqual(r3.fetchone()[3], u'http://test')
 
     def test__is_mybookmark(self):
-        pass
+        self.assertTrue(self.obj._is_mybookmark('http://test'))
 
     def test_select(self):
         pass
