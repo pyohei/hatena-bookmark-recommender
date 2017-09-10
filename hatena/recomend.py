@@ -1,13 +1,11 @@
-""" Recommend Selector
-
-Select recommend data from database
-"""
-
+"""Recommend url handle class."""
+from sqlalchemy import MetaData
 
 class Recommend(object):
 
     def __init__(self, engine):
         self.engine = engine
+        self.md = MetaData(self.engine)
 
     def select(self):
         rank_urls = []
