@@ -12,20 +12,18 @@ class Mybook(object):
         self.md = MetaData(self.engine)
 
     def register(self, bookmarks):
+        """Register bookmark urls."""
         for b in bookmarks:
             if self._has_record(b):
                 continue
             self._register(b)
 
     def _register(self, bookmark):
-        sql = (
-            "INSERT INTO my_bookmarks( "
-            "  url) "
-            "VALUES ('%s');" % (
-                bookmark)
-            )
-        c = self.engine.connect()
-        c.execute(sql)
+        """Register bookmark url."""
+        self.md.clear()
+        t = Table('my_bookmarks', self.md, autoload=True)
+        i = insert(t).values(url=bookmark)
+        i.execute()
 
     def _has_record(self, bookmark):
         """Check bookmark url is already existing."""
