@@ -1,7 +1,4 @@
-"""My bookmark class 
-
-"""
-
+"""My Bookmark class"""
 
 class Mybook(object):
 

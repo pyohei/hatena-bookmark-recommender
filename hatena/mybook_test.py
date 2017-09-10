@@ -7,7 +7,6 @@ class TestMyBook(unittest.TestCase):
 
     def setUp(self):
         engine = create_engine('sqlite:///:memory:')
-        bookmarks = ["http://test", "http://TEST"]
         self.obj = mybook.Mybook(engine)
         def _create_test_data():
             """Create database for test."""
@@ -32,6 +31,16 @@ class TestMyBook(unittest.TestCase):
     def test__has_record(self):
         self.assertTrue(self.obj._has_record('http://test'))
         self.assertFalse(self.obj._has_record('http://TEST'))
+
+    def test__register(self):
+        self.obj._register("http://TEST")
+        self.assertTrue(self.obj._has_record('http://TEST'))
+    
+    def test_register(self):
+        urls = ['http://hoge', 'http://foo']
+        self.obj.register(urls)
+        for u in urls:
+            self.assertTrue(self.obj._has_record(u))
 
 if __name__ == '__main__':
     unittest.main()
