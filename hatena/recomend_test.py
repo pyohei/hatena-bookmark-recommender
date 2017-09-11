@@ -64,9 +64,12 @@ class TestRecommend(unittest.TestCase):
 
     def test__is_mybookmark(self):
         self.assertTrue(self.obj._is_mybookmark('http://test'))
+        self.assertFalse(self.obj._is_mybookmark('http://test2'))
 
     def test_select(self):
-        pass
+        u = self.obj.select()
+        self.assertEqual(len(u), 1)
+        self.assertEqual(u[0], 'http://test2')
 
 if __name__ == '__main__':
     unittest.main()

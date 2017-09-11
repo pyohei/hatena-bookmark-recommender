@@ -11,9 +11,9 @@ class Recommend(object):
         rank_urls = []
         recs = self._load_top()
         for rec in recs:
-            #if self._is_mybookmark(rec["url"]):
-            #    print "oooooooooooppppppps"
-            #    continue
+            if self._is_mybookmark(rec["url"]):
+                print(rec['url'])
+                continue
             rank_urls.append(rec["url"])
         return rank_urls
 
@@ -30,4 +30,4 @@ class Recommend(object):
             "FROM my_bookmarks "
             "WHERE url = '%s'; " % (url))
         c = self.engine.connect()
-        return c.execute(sql)
+        return c.execute(sql).scalar()
