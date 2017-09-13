@@ -1,5 +1,7 @@
 """Recommend url handle class."""
 from sqlalchemy import MetaData
+from sqlalchemy import Table
+from sqlalchemy.sql import select
 
 class Recommend(object):
 
@@ -26,8 +28,9 @@ class Recommend(object):
         return c.execute(sql)
 
     def _is_mybookmark(self, url):
-        sql = ("SELECT * "
-            "FROM my_bookmarks "
-            "WHERE url = '%s'; " % (url))
-        c = self.engine.connect()
-        return c.execute(sql).scalar()
+        """Check the url is already registered as my bookmark."""
+        self.md.clear()
+        t = Table('my_bookmarks', self.md)
+        w = "url = '{}'".format(url)
+        s = select(columns=['url'], from_obj=t).where(w)
+        return s.execute().scalar()
