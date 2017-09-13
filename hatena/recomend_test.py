@@ -52,6 +52,7 @@ class TestRecommend(unittest.TestCase):
         _create_test_data()
 
     def test__load_top(self):
+        """Test the function os `_load_top`"""
         # Case: fech one url.
         r1 = self.obj._load_top(1)
         self.assertEqual(len(r1.fetchall()), 1)
@@ -63,10 +64,12 @@ class TestRecommend(unittest.TestCase):
         self.assertEqual(r3.fetchone()[3], u'http://test')
 
     def test__is_mybookmark(self):
+        """Test the function of `_is_mybookmark`"""
         self.assertTrue(self.obj._is_mybookmark('http://test'))
         self.assertFalse(self.obj._is_mybookmark('http://test2'))
 
     def test_select(self):
+        """Test the function of `select`"""
         u = self.obj.select()
         self.assertEqual(len(u), 1)
         self.assertEqual(u[0], 'http://test2')
