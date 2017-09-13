@@ -20,12 +20,12 @@ class Recommend(object):
         return rank_urls
 
     def _load_top(self, num=100):
-        sql = ("SELECT * "
-            "FROM recomend_feed "
-            "ORDER BY recomend_times "
-            "LIMIT %s " % num )
-        c = self.engine.connect()
-        return c.execute(sql)
+        """Load top recommend url"""
+        self.md.clear()
+        t = Table('recomend_feed', self.md)
+        s = select(columns=['*'], 
+                   from_obj=t).order_by('recomend_times').limit(num)
+        return s.execute()
 
     def _is_mybookmark(self, url):
         """Check the url is already registered as my bookmark."""
