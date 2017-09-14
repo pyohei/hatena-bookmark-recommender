@@ -11,6 +11,7 @@ Usage:
 
 """
 
+import logging
 import time
 from hatena.mybook import Mybook
 from hatena.feed import Feed
@@ -32,12 +33,14 @@ def main(user):
       - Recommend url from all bookmarked urls
 
     """
+    logging.basicConfig(level=logging.INFO)
+    logging.info('Start-->')
     engine = create_engine(ENGINE)
 
     f = Feed(engine, user)
     urls = f.load()
-    print(urls)
     f.save(urls, 1)
+    logging.info('Fetch Url-->')
 
     mb = Mybook(engine)
     mb.register(urls)
@@ -45,7 +48,6 @@ def main(user):
     b = User(engine, urls)
     users = b.extract()
     b.save(users)
-    print "--- Finish ---"
 
     # Load feed data of my reading feed users
     for user in users:
@@ -57,11 +59,12 @@ def main(user):
         recFeed.save(urls, user_no)
         time.sleep(1)
         break
+    logging.info('--->Export Result')
     r = Recommend(engine)
     recs = r.select()
     for r in recs:
         print(r)
-    print "--- end ---"
+    logging.info('--->END')
 
 if __name__ == "__main__":
     import argparse
