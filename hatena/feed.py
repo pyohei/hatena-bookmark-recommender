@@ -72,7 +72,7 @@ class Feed:
                 continue
             is_register = self._is_register(url)
             if is_register:
-                self._update_recomend_time(url)
+                self._update_recommend_time(url)
                 continue
             self._append_url(url, user_no, collect_no)
             collect_no += 1
@@ -97,7 +97,7 @@ class Feed:
         s = select(columns=['no'], from_obj=t).where(w)
         return s.execute().scalar()
 
-    def _update_recomend_time(self, url):
+    def _update_recommend_time(self, url):
         """Update recommended user count."""
         self.md.clear()
         t = Table('recomend_feed', self.md, autoload=True)

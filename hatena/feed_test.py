@@ -66,21 +66,21 @@ class TestFeed(unittest.TestCase):
         self.assertTrue(self.obj._is_register('http://test'))
         self.assertFalse(self.obj._is_register('test2'))
 
-    def test__load_recomend_time(self):
+    def test__load_recommend_time(self):
         """Test load recommend times."""
         self.assertEqual(self.obj._load_recommend_time('http://test'), 1)
 
-    def test__update_recomend_time(self):
+    def test__update_recommend_time(self):
         """Test update recommend times."""
         self.assertEqual(self.obj._load_recommend_time('http://test'), 1)
-        self.obj._update_recomend_time('http://test')
+        self.obj._update_recommend_time('http://test')
         self.assertEqual(self.obj._load_recommend_time('http://test'), 2)
 
     def test__append_url(self):
         """Test append recommend url."""
         url = 'http://hoge'
         self.obj._append_url(url, 1, 2)
-        self.obj._update_recomend_time(url)
+        self.obj._update_recommend_time(url)
         self.assertEqual(self.obj._load_recommend_time(url), 2)
         self.assertTrue(self.obj._is_register(url))
 

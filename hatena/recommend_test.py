@@ -1,14 +1,14 @@
 """Test of `recommend.py`"""
 from datetime import date
 import unittest
-import recomend
+import recommend
 from sqlalchemy import create_engine
 
 class TestRecommend(unittest.TestCase):
 
     def setUp(self):
         engine = create_engine('sqlite:///:memory:')
-        self.obj = recomend.Recommend(engine)
+        self.obj = recommend.Recommend(engine)
         def _create_test_data():
             """Create database for test. """
             r_create_sql = """
