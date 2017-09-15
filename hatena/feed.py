@@ -22,9 +22,6 @@ class Feed:
         self.engine = engine
         self.md = MetaData(self.engine)
         self.interval = 0.5
-        # set user name
-        # user name on conf had better set in main module
-        # or make new define like 'set_hatenaid'
         self.user = user
 
     def load(self):
