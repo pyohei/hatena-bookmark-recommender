@@ -14,7 +14,6 @@ Usage:
 import logging
 import time
 from hatena.bookmark import Bookmark
-from hatena.feed import Feed
 #from hatena.recommend import Recommend
 from sqlalchemy import create_engine
 
@@ -38,27 +37,22 @@ def main(user):
     logging.info('Start-->')
     engine = create_engine(ENGINE)
 
-    my_f = Bookmark(engine, user, True)
-    my_f.save()
+    my_b = Bookmark(engine, user, True)
+    my_b.save()
     logging.info('Save Url-->')
 
-    print("Finish")
-    return
+    for f in my_b.feeds:
+        u = f.extract()
+        f.save(u)
+        for uu in u:
+            user_no = f.load_user_no(user)
+            if not user_no:
+                continue
+            b = Bookmark(engine, user)
+            b.save()
+            time.sleep(1)
+            break
 
-    b = Feed(engine, urls)
-    users = b.extract()
-    b.save(users)
-
-    # Load feed data of my reading feed users
-    for user in users:
-        user_no = b.load_user_no(user)
-        if not user_no:
-            continue
-        recFeed = Bookmark(engine, user)
-        urls = recFeed.load()
-        recFeed.save(urls, user_no)
-        time.sleep(1)
-        break
     logging.info('--->Export Result')
 
     # Recommend
