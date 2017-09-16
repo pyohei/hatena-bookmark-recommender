@@ -1,4 +1,4 @@
-"""Feed operation class."""
+"""Bookmark operation class."""
 
 from datetime import date
 import logging
@@ -6,6 +6,7 @@ import time
 
 import feedparser
 import requests
+from feed import Feed
 from sqlalchemy import MetaData
 from sqlalchemy import Table
 from sqlalchemy.sql import select, update
@@ -18,17 +19,18 @@ LAST_FEED_ID = 20
 
 class Bookmark(object):
 
-    def __init__(self, engine, user):
+    def __init__(self, engine, user, is_base_user=False):
         self.engine = engine
         self.md = MetaData(self.engine)
         self.interval = 0.5
         self.user = user
+        self.is_base_user = is_base_user
 
     def load(self):
         """Load feed info."""
         interval = 20 # API default setting.
         logging.info('User: {}'.format(self.user))
-        urls = []
+        feeds = []
         start = START_FEED_ID
         end = LAST_FEED_ID
 
@@ -38,9 +40,9 @@ class Bookmark(object):
             feed = self._request(url)
             if not feed["entries"]:
                 break
-            urls += self._process_entry(feed)
+            feeds += self._process_entry(feed)
             time.sleep(self.interval)
-        return urls
+        return feeds
 
     def _make_feed_api_url(self, id):
         """Create api url of rss feed."""
@@ -57,7 +59,8 @@ class Bookmark(object):
         l = []
         for f in feed["entries"]:
             link = f["link"]
-            l.append(link)
+            #l.append(link)
+            l.append(Feed(self.engine, link))
         return l
 
     def save(self, urls, user_no):

@@ -15,7 +15,7 @@ import logging
 import time
 from hatena.mybook import Mybook
 from hatena.bookmark import Bookmark
-from hatena.user import User
+from hatena.feed import Feed
 from hatena.recomend import Recommend
 from sqlalchemy import create_engine
 
@@ -47,7 +47,7 @@ def main(user):
     mb = Mybook(engine)
     mb.register(urls)
 
-    b = User(engine, urls)
+    b = Feed(engine, urls)
     users = b.extract()
     b.save(users)
 

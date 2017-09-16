@@ -1,4 +1,4 @@
-"""Bookmark user class"""
+"""Feed operation class"""
 
 import logging
 import urllib
@@ -11,13 +11,13 @@ import requests
 
 HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/?url={url}"
 
-class User:
+class Feed(object):
     """Bookmark user class."""
 
     def __init__(self, engine, urls):
         logging.basicConfig(level=20)
         self.engine = engine 
-        self.urls = urls
+        self.urls = [urls]
         self.md = MetaData(self.engine)
         self.sleep_sec = 1
 

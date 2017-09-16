@@ -1,13 +1,13 @@
 import unittest
-import user
+import feed
 from sqlalchemy import create_engine
 
-class TestUser(unittest.TestCase):
+class TestFeed(unittest.TestCase):
 
     def setUp(self):
         engine = create_engine('sqlite:///:memory:')
         self.target_url = 'http://www.hatena.ne.jp/'
-        self.obj = user.User(engine, [self.target_url])
+        self.obj = feed.Feed(engine, self.target_url)
         def _create_test_data():
             """Create database for test.
 
@@ -77,7 +77,7 @@ class TestUser(unittest.TestCase):
         # Success pattern.
         self.assertIsInstance(self.obj.extract()[0], unicode)
         # NG pattern.
-        self.obj.urls = ['http://www.hatena.ne.j']
+        self.obj.urls = 'http://www.hatena.ne.j'
         self.assertEqual(self.obj.extract(), [])
 
 if __name__ == '__main__':

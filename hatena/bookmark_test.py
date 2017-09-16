@@ -1,14 +1,14 @@
 """Test of bookmark.py"""
 from datetime import date
 import unittest
-import feed
+import bookmark
 from sqlalchemy import create_engine
 
-class TestFeed(unittest.TestCase):
+class TestBookmark(unittest.TestCase):
 
     def setUp(self):
         engine = create_engine('sqlite:///:memory:')
-        self.obj = feed.Feed(engine, 'test')
+        self.obj = bookmark.Bookmark(engine, 'test')
         def _create_test_data():
             """Create database for test.
 
