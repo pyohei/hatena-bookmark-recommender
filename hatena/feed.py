@@ -4,10 +4,7 @@ import logging
 import urllib
 import time
 from user import User
-#from datetime import date
 from sqlalchemy import MetaData
-#from sqlalchemy import Table
-#from sqlalchemy.sql import select,update,insert
 import requests
 
 HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/?url={url}"
