@@ -41,20 +41,21 @@ def main(user):
     my_b.save()
     logging.info('Save Url-->')
 
+    # TODO: create transaction the below process.
     for f in my_b.feeds:
-        u = f.extract()
-        f.save(u)
-        for uu in u:
-            user_no = f.load_user_no(user)
-            if not user_no:
-                continue
-            b = Bookmark(engine, user)
-            b.save()
+        users = f.extract()
+        #f.save(u)
+        for u in users:
+            #user_no = f.load_user_no(user)
+            #if not user_no:
+            #    continue
+            logging.info(u.id)
+            logging.info(u.user)
             time.sleep(1)
+            b = Bookmark(engine, u.user)
+            b.save()
             break
-
     logging.info('--->Export Result')
-
     # Recommend
     #r = Recommend(engine)
     #recs = r.select()

@@ -3,10 +3,11 @@
 import logging
 import urllib
 import time
-from datetime import date
+from user import User
+#from datetime import date
 from sqlalchemy import MetaData
-from sqlalchemy import Table
-from sqlalchemy.sql import select,update,insert
+#from sqlalchemy import Table
+#from sqlalchemy.sql import select,update,insert
 import requests
 
 HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/?url={url}"
@@ -35,7 +36,7 @@ class Feed(object):
                 if "user" not in b:
                     continue
                 # TODO: Ignore myself.
-                users.append(b["user"])
+                users.append(User(self.engine, b["user"]))
             time.sleep(self.sleep_sec)
         return users
 
@@ -51,43 +52,43 @@ class Feed(object):
         """
         return requests.get(url).json()
 
-    def save(self, users):
-        # TDOD: No test code.
-        for user in users:
-            is_register = self._is_register(user)
-            print('{} -- {}'.format(user, str(is_register)))
-            if is_register:
-                self._update_recommend_time(user)
-                continue
-            self._append_user(user)
+    #def save(self, users):
+    #    # TDOD: No test code.
+    #    for user in users:
+    #        is_register = self._is_register(user)
+    #        print('{} -- {}'.format(user, str(is_register)))
+    #        if is_register:
+    #            self._update_recommend_time(user)
+    #            continue
+    #        self._append_user(user)
 
-    def _is_register(self, user):
-        """Check the user is already registered or not."""
-        t = Table('users', self.md)
-        w = "user_name = '{}'".format(user)
-        s = select(columns=['user_name'], from_obj=t).where(w)
-        return s.execute().scalar()
+    #def _is_register(self, user):
+    #    """Check the user is already registered or not."""
+    #    t = Table('users', self.md)
+    #    w = "user_name = '{}'".format(user)
+    #    s = select(columns=['user_name'], from_obj=t).where(w)
+    #    return s.execute().scalar()
 
-    def _update_recommend_time(self, user):
-        """Update recommended user count."""
-        self.md.clear()
-        t = Table('users', self.md, autoload=True)
-        w = "user_name = '{}'".format(user)
-        u = update(t).where(w).values(recomend_times=t.c.recomend_times+1)
-        u.execute()
+    #def _update_recommend_time(self, user):
+    #    """Update recommended user count."""
+    #    self.md.clear()
+    #    t = Table('users', self.md, autoload=True)
+    #    w = "user_name = '{}'".format(user)
+    #    u = update(t).where(w).values(recomend_times=t.c.recomend_times+1)
+    #    u.execute()
 
-    def _append_user(self, user):
-        """Add new recommend user."""
-        self.md.clear()
-        t = Table('users', self.md, autoload=True)
-        i = insert(t).values(user_name=user,
-                             register_datetime=date.today())
-        i.execute()
+    #def _append_user(self, user):
+    #    """Add new recommend user."""
+    #    self.md.clear()
+    #    t = Table('users', self.md, autoload=True)
+    #    i = insert(t).values(user_name=user,
+    #                         register_datetime=date.today())
+    #    i.execute()
 
-    def load_user_no(self, user):
-        """Load user_no."""
-        self.md.clear()
-        t = Table('users', self.md, auto_load=True)
-        w = "user_name = '{}'".format(user)
-        s = select(columns=['user_no'], from_obj=t).where(w)
-        return s.execute().fetchone()['user_no']
+    #def load_user_no(self, user):
+    #    """Load user_no."""
+    #    self.md.clear()
+    #    t = Table('users', self.md, auto_load=True)
+    #    w = "user_name = '{}'".format(user)
+    #    s = select(columns=['user_no'], from_obj=t).where(w)
+    #    return s.execute().fetchone()['user_no']
