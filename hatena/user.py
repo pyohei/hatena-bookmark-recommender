@@ -54,7 +54,7 @@ class User(object):
     def _load_user_no(self):
         """Load user_no."""
         self.md.clear()
-        t = Table('users', self.md, auto_load=True)
+        t = Table('users', self.md, autoload=True)
         w = "user_name = '{}'".format(self.user)
         s = select(columns=['user_no'], from_obj=t).where(w)
         r = s.execute().fetchone()

@@ -14,6 +14,7 @@ Usage:
 import logging
 import time
 from hatena.bookmark import Bookmark
+from hatena.user import User
 #from hatena.recommend import Recommend
 from sqlalchemy import create_engine
 
@@ -37,22 +38,20 @@ def main(user):
     logging.info('Start-->')
     engine = create_engine(ENGINE)
 
-    my_b = Bookmark(engine, user, True)
+    my_u = User(engine, user)
+
+    my_b = Bookmark(engine, my_u, True)
     my_b.save()
     logging.info('Save Url-->')
 
     # TODO: create transaction the below process.
     for f in my_b.feeds:
         users = f.extract()
-        #f.save(u)
         for u in users:
-            #user_no = f.load_user_no(user)
-            #if not user_no:
-            #    continue
             logging.info(u.id)
             logging.info(u.user)
             time.sleep(1)
-            b = Bookmark(engine, u.user)
+            b = Bookmark(engine, u)
             b.save()
             break
     logging.info('--->Export Result')

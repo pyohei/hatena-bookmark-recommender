@@ -8,7 +8,11 @@ class TestBookmark(unittest.TestCase):
 
     def setUp(self):
         engine = create_engine('sqlite:///:memory:')
-        self.obj = bookmark.Bookmark(engine, 'test')
+        # User class mock.
+        u = UserMock()
+        u.id = 1
+        u.user = 'test'
+        self.obj = bookmark.Bookmark(engine, u)
         def _create_test_data():
             """Create database for test.
 
@@ -17,11 +21,11 @@ class TestBookmark(unittest.TestCase):
             create_sql = """
                          CREATE TABLE `recomend_feed` (
                            `no` INTEGER PRIMARY KEY AUTOINCREMENT,
-                           `collect_day` int ( 10 ) NOT NULL,
-                           `collect_no` int ( 6 ) NOT NULL,
+                           `collect_day` int NOT NULL,
+                           `collect_no` int NOT NULL,
                            `url` text,
-                           `recomend_times` int ( 5 ) DEFAULT 1,
-                           `user_no` int ( 10 ),
+                           `recomend_times` int DEFAULT 1,
+                           `user_no` int,
                            `isAdapt` tinyint DEFAULT 0,
                            `update_time` timestamp
                          );
@@ -86,7 +90,10 @@ class TestBookmark(unittest.TestCase):
 
     def test_load(self):
         """Test load function."""
-        self.obj.user = 'sample'
+        u = UserMock()
+        u.id = 1
+        u.user = 'sample'
+        self.obj.user = u
         self.obj._load()
         self.assertNotEqual(self.obj.feeds, [])
         self.assertEqual(len(self.obj.feeds), 17)
@@ -107,6 +114,10 @@ class TestBookmark(unittest.TestCase):
 
 class FeedMock(object):
     """Mock object for Feed."""
+    pass
+
+class UserMock(object):
+    """Mock object for user."""
     pass
 
 if __name__ == '__main__':

@@ -10,7 +10,7 @@ from mybook import Mybook
 from feed import Feed
 from sqlalchemy import MetaData
 from sqlalchemy import Table
-from sqlalchemy.sql import select, update
+from sqlalchemy.sql import select, update, column
 
 HATENA_FEED_URL =  "http://b.hatena.ne.jp/{user}/rss?of={no}"
 # TODO: Change these parameters into argument.
@@ -37,7 +37,7 @@ class Bookmark(object):
     def _load(self):
         """Load feed info."""
         interval = 20 # API default setting.
-        logging.info('User: {}'.format(self.user))
+        logging.info('User: {}, {}'.format(self.user.id, self.user.user))
         feeds = []
         start = START_FEED_ID
         end = LAST_FEED_ID
@@ -54,7 +54,7 @@ class Bookmark(object):
 
     def _make_feed_api_url(self, id):
         """Create api url of rss feed."""
-        return HATENA_FEED_URL.format(user=self.user, no=str(id))
+        return HATENA_FEED_URL.format(user=self.user.user, no=str(id))
 
     def _request(self, url):
         """Request api.
@@ -102,25 +102,32 @@ class Bookmark(object):
     def _load_recommend_time(self, url):
         """Load recommend time."""
         self.md.clear()
-        t = Table('recomend_feed', self.md, auto_load=True)
-        w = "url = '{}'".format(url)
-        s = select(columns=['recomend_times'], from_obj=t).where(w)
-        return s.execute().fetchone()['recomend_times']
+        t = Table('recomend_feed', self.md, autoload=True)
+        c_url = column('url')
+        c_recommend_times = column('recomend_times')
+        s = select(columns=[c_recommend_times], from_obj=t,
+            whereclause=(c_url==url))
+        return s.execute().fetchone()[c_recommend_times]
 
     def _is_register(self, url):
         """Check the url is already registered in the same day."""
         t = Table('recomend_feed', self.md)
-        w = "url = '{}' and collect_day = '{}' ".format(
-            url, int(date.today().strftime("%Y%m%d")))
-        s = select(columns=['no'], from_obj=t).where(w)
+        c_no = column('no')
+        c_url = column('url')
+        c_collect_day = column('collect_day')
+        s = select(columns=[c_no], from_obj=t
+            ).where(c_url==url).where(
+                c_collect_day==date.today().strftime("%Y%m%d"))
         return s.execute().scalar()
 
     def _update_recommend_time(self, url):
         """Update recommended user count."""
         self.md.clear()
         t = Table('recomend_feed', self.md, autoload=True)
-        w = "url = '{}'".format(url)
-        u = update(t).where(w).values(recomend_times=t.c.recomend_times+1)
+        c_url = column('url')
+        c_recommend_times = column('recomend_times')
+        u = update(t).where(c_url==url).values(
+                recomend_times=c_recommend_times+1)
         u.execute()
 
     def _append_url(self, url, user_no, c_no):
@@ -129,7 +136,7 @@ class Bookmark(object):
         md = MetaData(self.engine)
         table = Table('recomend_feed', md, autoload=True)
         v = table.insert().values(url=url,
-                                  collect_day=int(date.today().strftime("%Y%m%d")),
+                                  collect_day=date.today().strftime("%Y%m%d"),
                                   collect_no=c_no,
                                   user_no=user_no)
         c = self.engine.connect()
