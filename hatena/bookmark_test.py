@@ -66,7 +66,7 @@ class TestBookmark(unittest.TestCase):
         self.assertTrue(self.obj._is_register('http://test'))
         self.assertFalse(self.obj._is_register('test2'))
 
-    def test__load_recommend_time(self):
+    def test___load_recommend_time(self):
         """Test load recommend times."""
         self.assertEqual(self.obj._load_recommend_time('http://test'), 1)
 
@@ -87,8 +87,9 @@ class TestBookmark(unittest.TestCase):
     def test_load(self):
         """Test load function."""
         self.obj.user = 'sample'
-        self.assertNotEqual(self.obj.load(), [])
-        self.assertEqual(len(self.obj.load()), 17)
+        self.obj._load()
+        self.assertNotEqual(self.obj.feeds, [])
+        self.assertEqual(len(self.obj.feeds), 17)
 
     def test_save(self):
         """Test save function."""
@@ -99,11 +100,13 @@ class TestBookmark(unittest.TestCase):
             f.urls = u
             f.url = u
             urls.append(f)
-        self.obj.save(urls, 9)
+        self.obj.urls = urls
+        self.obj.save()
         for u in urls:
             self.assertTrue(self.obj._is_register(u.url))
 
 class FeedMock(object):
+    """Mock object for Feed."""
     pass
 
 if __name__ == '__main__':

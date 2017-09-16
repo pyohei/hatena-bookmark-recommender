@@ -26,8 +26,15 @@ class Bookmark(object):
         self.interval = 0.5
         self.user = user
         self.is_base_user = is_base_user
+        self.urls = []
 
-    def load(self):
+    @property
+    def feeds(self):
+        if not self.urls:
+            self._load()
+        return self.urls
+
+    def _load(self):
         """Load feed info."""
         interval = 20 # API default setting.
         logging.info('User: {}'.format(self.user))
@@ -43,7 +50,7 @@ class Bookmark(object):
                 break
             feeds += self._process_entry(feed)
             time.sleep(self.interval)
-        return feeds
+        self.urls = feeds
 
     def _make_feed_api_url(self, id):
         """Create api url of rss feed."""
@@ -64,16 +71,20 @@ class Bookmark(object):
             l.append(Feed(self.engine, link))
         return l
 
-    def save(self, urls, user_no):
+    def save(self):
         """Save url."""
         # TODO: Create test code.
+        if not self.urls:
+            self._load()
         if self.is_base_user:
-            for u in urls:
+            for u in self.urls:
                 b = Mybook(self.engine)
                 b.register(u.url)
         else:
+            # TODO: Load user no
+            user_no = 0
             collect_no = 1
-            for url in urls:
+            for url in self.urls:
                 if self._is_long_url(url.url):
                     logging.info("Url exceeds 255{}.".format(url.url))
                     continue

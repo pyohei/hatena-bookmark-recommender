@@ -13,10 +13,9 @@ Usage:
 
 import logging
 import time
-from hatena.mybook import Mybook
 from hatena.bookmark import Bookmark
 from hatena.feed import Feed
-from hatena.recomend import Recommend
+#from hatena.recommend import Recommend
 from sqlalchemy import create_engine
 
 
@@ -39,13 +38,12 @@ def main(user):
     logging.info('Start-->')
     engine = create_engine(ENGINE)
 
-    my_f = Bookmark(engine, user)
-    urls = my_f.load()
-    my_f.save(urls, 1)
-    logging.info('Fetch Url-->')
+    my_f = Bookmark(engine, user, True)
+    my_f.save()
+    logging.info('Save Url-->')
 
-    mb = Mybook(engine)
-    mb.register(urls)
+    print("Finish")
+    return
 
     b = Feed(engine, urls)
     users = b.extract()
@@ -62,10 +60,12 @@ def main(user):
         time.sleep(1)
         break
     logging.info('--->Export Result')
-    r = Recommend(engine)
-    recs = r.select()
-    for r in recs:
-        print(r)
+
+    # Recommend
+    #r = Recommend(engine)
+    #recs = r.select()
+    #for r in recs:
+    #    print(r)
     logging.info('--->END')
 
 if __name__ == "__main__":
