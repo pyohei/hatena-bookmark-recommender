@@ -14,7 +14,7 @@ Usage:
 import logging
 import time
 from hatena.mybook import Mybook
-from hatena.feed import Feed
+from hatena.bookmark import Bookmark
 from hatena.user import User
 from hatena.recomend import Recommend
 from sqlalchemy import create_engine
@@ -33,13 +33,15 @@ def main(user):
       - Recommend url from all bookmarked urls
 
     """
+
+    # Process Flow 
     logging.basicConfig(level=logging.INFO)
     logging.info('Start-->')
     engine = create_engine(ENGINE)
 
-    f = Feed(engine, user)
-    urls = f.load()
-    f.save(urls, 1)
+    my_f = Bookmark(engine, user)
+    urls = my_f.load()
+    my_f.save(urls, 1)
     logging.info('Fetch Url-->')
 
     mb = Mybook(engine)
@@ -54,7 +56,7 @@ def main(user):
         user_no = b.load_user_no(user)
         if not user_no:
             continue
-        recFeed = Feed(engine, user)
+        recFeed = Bookmark(engine, user)
         urls = recFeed.load()
         recFeed.save(urls, user_no)
         time.sleep(1)

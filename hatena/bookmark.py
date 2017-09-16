@@ -16,7 +16,7 @@ START_FEED_ID = 0
 #LAST_FEED_ID = 200
 LAST_FEED_ID = 20
 
-class Feed:
+class Bookmark(object):
 
     def __init__(self, engine, user):
         self.engine = engine

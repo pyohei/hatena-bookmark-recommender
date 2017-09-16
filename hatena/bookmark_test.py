@@ -1,4 +1,4 @@
-"""Test of feed.py"""
+"""Test of bookmark.py"""
 from datetime import date
 import unittest
 import feed
