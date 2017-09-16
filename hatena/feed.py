@@ -18,6 +18,7 @@ class Feed(object):
         logging.basicConfig(level=20)
         self.engine = engine 
         self.urls = [urls]
+        self.url = urls
         self.md = MetaData(self.engine)
         self.sleep_sec = 1
 

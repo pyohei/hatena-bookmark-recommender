@@ -92,10 +92,19 @@ class TestBookmark(unittest.TestCase):
 
     def test_save(self):
         """Test save function."""
-        urls = ['http://foo', 'http://bar']
+        urls = []
+        for u in ['http://foo', 'http://bar']:
+            f = FeedMock()
+            # TODO: Delete urls attribute.
+            f.urls = u
+            f.url = u
+            urls.append(f)
         self.obj.save(urls, 9)
         for u in urls:
-            self.assertTrue(self.obj._is_register(u))
+            self.assertTrue(self.obj._is_register(u.url))
+
+class FeedMock(object):
+    pass
 
 if __name__ == '__main__':
     unittest.main()

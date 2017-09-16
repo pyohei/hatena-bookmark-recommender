@@ -37,10 +37,9 @@ class TestMyBook(unittest.TestCase):
         self.assertTrue(self.obj._has_record('http://TEST'))
     
     def test_register(self):
-        urls = ['http://hoge', 'http://foo']
-        self.obj.register(urls)
-        for u in urls:
-            self.assertTrue(self.obj._has_record(u))
+        url = 'http://hoge'
+        self.obj.register(url)
+        self.assertTrue(self.obj._has_record(url))
 
 if __name__ == '__main__':
     unittest.main()

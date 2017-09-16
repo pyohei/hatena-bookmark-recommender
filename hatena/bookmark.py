@@ -6,6 +6,7 @@ import time
 
 import feedparser
 import requests
+from mybook import Mybook
 from feed import Feed
 from sqlalchemy import MetaData
 from sqlalchemy import Table
@@ -65,17 +66,23 @@ class Bookmark(object):
 
     def save(self, urls, user_no):
         """Save url."""
-        collect_no = 1
-        for url in urls:
-            if self._is_long_url(url):
-                logging.info("Url exceeds 255{}.".format(url))
-                continue
-            is_register = self._is_register(url)
-            if is_register:
-                self._update_recommend_time(url)
-                continue
-            self._append_url(url, user_no, collect_no)
-            collect_no += 1
+        # TODO: Create test code.
+        if self.is_base_user:
+            for u in urls:
+                b = Mybook(self.engine)
+                b.register(u.url)
+        else:
+            collect_no = 1
+            for url in urls:
+                if self._is_long_url(url.url):
+                    logging.info("Url exceeds 255{}.".format(url.url))
+                    continue
+                is_register = self._is_register(url.url)
+                if is_register:
+                    self._update_recommend_time(url.url)
+                    continue
+                self._append_url(url.url, user_no, collect_no)
+                collect_no += 1
     
     def _is_long_url(self, url):
         """Check the url is over database column setting."""

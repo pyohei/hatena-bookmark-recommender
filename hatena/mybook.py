@@ -11,12 +11,11 @@ class Mybook(object):
         self.engine = engine
         self.md = MetaData(self.engine)
 
-    def register(self, bookmarks):
+    def register(self, url):
         """Register bookmark urls."""
-        for b in bookmarks:
-            if self._has_record(b):
-                continue
-            self._register(b)
+        if self._has_record(url):
+            return
+        self._register(url)
 
     def _register(self, bookmark):
         """Register bookmark url."""
