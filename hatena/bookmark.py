@@ -82,7 +82,6 @@ class Bookmark(object):
                 b.register(u.url)
         else:
             # TODO: Load user no
-            user_no = 0
             collect_no = 1
             for url in self.urls:
                 if self._is_long_url(url.url):
@@ -92,7 +91,7 @@ class Bookmark(object):
                 if is_register:
                     self._update_recommend_time(url.url)
                     continue
-                self._append_url(url.url, user_no, collect_no)
+                self._append_url(url.url, self.user.id, collect_no)
                 collect_no += 1
     
     def _is_long_url(self, url):

@@ -1,10 +1,9 @@
 """User class."""
 
 import logging
-from datetime import date
 from sqlalchemy import MetaData
 from sqlalchemy import Table
-from sqlalchemy.sql import select,update,insert
+from sqlalchemy.sql import select,insert
 
 
 class User(object):
@@ -21,32 +20,31 @@ class User(object):
         """Load id."""
         n = self._load_user_no()
         if n:
-            self._update_recommend_time(self.user)
+            #self._update_recommend_time(self.user)
             return n
         return self._append_user()
     no = id
 
     def _is_register(self, user):
         """Check the user is already registered or not."""
-        t = Table('users', self.md)
-        w = "user_name = '{}'".format(user)
-        s = select(columns=['user_name'], from_obj=t).where(w)
+        t = Table('user', self.md)
+        w = "name = '{}'".format(user)
+        s = select(columns=['name'], from_obj=t).where(w)
         return s.execute().scalar()
 
-    def _update_recommend_time(self, user):
-        """Update recommended user count."""
-        self.md.clear()
-        t = Table('users', self.md, autoload=True)
-        w = "user_name = '{}'".format(user)
-        u = update(t).where(w).values(recomend_times=t.c.recomend_times+1)
-        u.execute()
+    #def _update_recommend_time(self, user):
+    #    """Update recommended user count."""
+    #    self.md.clear()
+    #    t = Table('user', self.md, autoload=True)
+    #    w = "name = '{}'".format(user)
+    #    u = update(t).where(w).values(recomend_times=t.c.recomend_times+1)
+    #    u.execute()
           
     def _append_user(self):
         """Add new recommend user."""
         self.md.clear()
-        t = Table('users', self.md, autoload=True)
-        i = insert(t).values(user_name=self.user,
-                             register_datetime=date.today())
+        t = Table('user', self.md, autoload=True)
+        i = insert(t).values(name=self.user)
         i.execute()
         # TODO: Change logic.
         return self._load_user_no()
@@ -54,10 +52,10 @@ class User(object):
     def _load_user_no(self):
         """Load user_no."""
         self.md.clear()
-        t = Table('users', self.md, autoload=True)
-        w = "user_name = '{}'".format(self.user)
-        s = select(columns=['user_no'], from_obj=t).where(w)
+        t = Table('user', self.md, autoload=True)
+        w = "name = '{}'".format(self.user)
+        s = select(columns=['id'], from_obj=t).where(w)
         r = s.execute().fetchone()
         if r:
-            return r['user_no']
+            return r['id']
         return None
