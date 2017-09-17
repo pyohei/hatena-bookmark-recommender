@@ -5,6 +5,9 @@ import urllib
 import time
 from user import User
 from sqlalchemy import MetaData
+from sqlalchemy import Table
+from sqlalchemy.sql import select, update, column, insert
+
 import requests
 
 HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/?url={url}"
@@ -17,14 +20,25 @@ class Feed(object):
         self.engine = engine 
         self.urls = [urls]
         self.url = urls
+        self.title = ''
         self.md = MetaData(self.engine)
         self.sleep_sec = 1
+
+    @property
+    def id(self):
+        if not self._load_id():
+            self._append()
+        return self._load_id()
 
     def extract(self):
         """Extract bookmarked users from setted url."""
         users = []
         for feedurl in self.urls:
             logging.info('URL:{}'.format(feedurl))
+            # TESTING
+            if not self._load_id():
+                logging.info('Regist!!!!')
+                self._append()
             api_url = self._make_entry_api_url(feedurl)
             result = self._request(api_url)
             if not result:
@@ -48,3 +62,28 @@ class Feed(object):
         Request argument url and return result data as dict.
         """
         return requests.get(url).json()
+
+    def _load_id(self):
+        logging.info(self.url)
+        logging.info('------>')
+        t = Table('feed', self.md)
+        c_url = column('url')
+        c_id = column('id')
+        s = select(columns=[c_id], from_obj=t).where(c_url==self.url)
+        print s
+        r = s.execute().fetchone()
+        logging.info(r)
+        if r:
+            return r['id']
+        return None
+
+    def _append(self):
+        self.md.clear()
+        md = MetaData(self.engine)
+        t = Table('feed', md, autoload=True)
+        logging.info(self.url)
+        logging.info(type(self.url))
+        i = insert(t).values(url=self.url,
+                             title=self.title)
+        i.execute()
+

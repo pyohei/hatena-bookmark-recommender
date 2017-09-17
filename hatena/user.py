@@ -18,6 +18,7 @@ class User(object):
     @property
     def id(self):
         """Load id."""
+        logging.info(self.user)
         n = self._load_user_no()
         if n:
             #self._update_recommend_time(self.user)

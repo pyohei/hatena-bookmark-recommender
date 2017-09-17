@@ -84,6 +84,7 @@ class Bookmark(object):
             # TODO: Load user no
             collect_no = 1
             for url in self.urls:
+                # will discontinue
                 if self._is_long_url(url.url):
                     logging.info("Url exceeds 255{}.".format(url.url))
                     continue
@@ -92,6 +93,8 @@ class Bookmark(object):
                     self._update_recommend_time(url.url)
                     continue
                 self._append_url(url.url, self.user.id, collect_no)
+                logging.info('AAAAAAAA')
+                self._append(url)
                 collect_no += 1
     
     def _is_long_url(self, url):
@@ -138,5 +141,20 @@ class Bookmark(object):
                                   collect_day=date.today().strftime("%Y%m%d"),
                                   collect_no=c_no,
                                   user_no=user_no)
+        c = self.engine.connect()
+        c.execute(v)
+
+    def _append(self, url):
+        """Append url into bookmark."""
+        logging.info('-----')
+        logging.info(self.user.id)
+        logging.info(url.id)
+        self.md.clear()
+        md = MetaData(self.engine)
+        table = Table('bookmark', md, autoload=True)
+        v = table.insert().values(url_id=url.id,
+                                  user_id=self.user.id,
+                                  registered_date=int(
+                                      date.today().strftime("%Y%m%d")))
         c = self.engine.connect()
         c.execute(v)
