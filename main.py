@@ -33,13 +33,10 @@ def main(user):
 
     """
 
-    # Process Flow 
     logging.basicConfig(level=logging.INFO)
-    logging.info('Start-->')
     engine = create_engine(ENGINE)
 
     my_u = User(engine, user)
-
     my_b = Bookmark(engine, my_u, True)
     my_b.save()
     logging.info('Save Url-->')
@@ -49,7 +46,7 @@ def main(user):
         users = f.extract()
         for u in users:
             logging.info(u.id)
-            logging.info(u.user)
+            logging.info(u.name)
             time.sleep(1)
             b = Bookmark(engine, u)
             b.save()

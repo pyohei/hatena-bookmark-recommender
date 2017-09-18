@@ -6,7 +6,7 @@ import time
 from user import User
 from sqlalchemy import MetaData
 from sqlalchemy import Table
-from sqlalchemy.sql import select, update, column, insert
+from sqlalchemy.sql import select, column, insert
 
 import requests
 
@@ -15,11 +15,10 @@ HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/?url={url}"
 class Feed(object):
     """Bookmark user class."""
 
-    def __init__(self, engine, urls, title=''):
+    def __init__(self, engine, url, title=''):
         logging.basicConfig(level=20)
         self.engine = engine 
-        self.urls = [urls]
-        self.url = urls
+        self.url = url
         self.title = title
         self.md = MetaData(self.engine)
         self.sleep_sec = 1
@@ -33,22 +32,25 @@ class Feed(object):
     def extract(self):
         """Extract bookmarked users from setted url."""
         users = []
-        for feedurl in self.urls:
-            logging.info('URL:{}'.format(feedurl))
-            # TESTING
-            if not self._load_id():
-                logging.info('Regist!!!!')
-                self._append()
-            api_url = self._make_entry_api_url(feedurl)
-            result = self._request(api_url)
-            if not result:
+        logging.info('URL:{}'.format(self.url))
+
+        # TESTING
+        if not self._load_id():
+            logging.info('Regist!!!!')
+            self._append()
+
+        # Abolish url as argument.
+        api_url = self._make_entry_api_url(self.url)
+        result = self._request(api_url)
+        if not result:
+            logging.info('No targets')
+            return
+        for b in result.get('bookmarks', []):
+            if "user" not in b:
                 continue
-            for b in result.get('bookmarks', []):
-                if "user" not in b:
-                    continue
-                # TODO: Ignore myself.
-                users.append(User(self.engine, b["user"]))
-            time.sleep(self.sleep_sec)
+            # TODO: Ignore myself.
+            users.append(User(self.engine, b["user"]))
+        time.sleep(self.sleep_sec)
         return users
 
     def _make_entry_api_url(self, url):
@@ -82,7 +84,6 @@ class Feed(object):
         md = MetaData(self.engine)
         t = Table('feed', md, autoload=True)
         logging.info(self.url)
-        logging.info(type(self.url))
         i = insert(t).values(url=self.url,
                              title=self.title)
         i.execute()

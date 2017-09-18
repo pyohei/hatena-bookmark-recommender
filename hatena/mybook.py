@@ -2,7 +2,7 @@
 
 from sqlalchemy import MetaData
 from sqlalchemy import Table
-from sqlalchemy.sql import select,insert
+from sqlalchemy.sql import select,insert,column
 
 
 class Mybook(object):
@@ -27,6 +27,6 @@ class Mybook(object):
     def _has_record(self, bookmark):
         """Check bookmark url is already existing."""
         t = Table('my_bookmarks', self.md)
-        w = "url = '{}'".format(bookmark)
-        s = select(columns=['no'], from_obj=t).where(w)
+        c_url = column('url')
+        s = select(columns=[column('no')], from_obj=t).where(c_url==bookmark)
         return s.execute().scalar()
