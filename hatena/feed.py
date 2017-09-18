@@ -15,12 +15,12 @@ HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/?url={url}"
 class Feed(object):
     """Bookmark user class."""
 
-    def __init__(self, engine, urls):
+    def __init__(self, engine, urls, title=''):
         logging.basicConfig(level=20)
         self.engine = engine 
         self.urls = [urls]
         self.url = urls
-        self.title = ''
+        self.title = title
         self.md = MetaData(self.engine)
         self.sleep_sec = 1
 

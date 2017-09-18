@@ -67,8 +67,9 @@ class Bookmark(object):
         l = []
         for f in feed["entries"]:
             link = f["link"]
+            title = f['title']
             #l.append(link)
-            l.append(Feed(self.engine, link))
+            l.append(Feed(self.engine, link, title))
         return l
 
     def save(self):
