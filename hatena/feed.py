@@ -72,7 +72,6 @@ class Feed(object):
         c_url = column('url')
         c_id = column('id')
         s = select(columns=[c_id], from_obj=t).where(c_url==self.url)
-        print s
         r = s.execute().fetchone()
         logging.info(r)
         if r:

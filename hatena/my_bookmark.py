@@ -8,31 +8,28 @@ from sqlalchemy.sql import select,insert,column
 class MyBookmark(Bookmark):
 
     def register(self, url):
-        """Register bookmark urls."""
+        """Register bookmark feeds."""
         if self._has_record(url):
             return
         self._register(url)
 
     def save(self):
-        self._load()
-        for u in self.urls:
-            if self._has_record(u.url):
-                print("Existing!.")
+        """Save bookmark as my bookmark."""
+        for f in self.feeds:
+            if self._has_record(f.id):
                 continue
-            print("Register!.")
-            self._register(u.url)
-            # Append
+            self._register(f.id)
 
-    def _register(self, bookmark):
+    def _register(self, url_id):
         """Register bookmark url."""
         self.md.clear()
-        t = Table('my_bookmarks', self.md, autoload=True)
-        i = insert(t).values(url=bookmark)
+        t = Table('my_bookmark', self.md, autoload=True)
+        i = insert(t).values(url_id=url_id)
         i.execute()
 
-    def _has_record(self, bookmark):
+    def _has_record(self, url_id):
         """Check bookmark url is already existing."""
-        t = Table('my_bookmarks', self.md)
-        c_url = column('url')
-        s = select(columns=[column('no')], from_obj=t).where(c_url==bookmark)
+        t = Table('my_bookmark', self.md)
+        c_url = column('url_id')
+        s = select(columns=[column('id')], from_obj=t).where(c_url==url_id)
         return s.execute().scalar()
