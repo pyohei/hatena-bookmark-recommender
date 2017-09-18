@@ -24,13 +24,6 @@ class User(object):
             return n
         return self._append_user()
 
-    def _is_register(self, name):
-        """Check the user is already registered or not."""
-        t = Table('user', self.md)
-        c_name = column('name')
-        s = select(columns=['name'], from_obj=t).where(c_name==name)
-        return s.execute().scalar()
-
     def _append_user(self):
         """Add new recommend user."""
         self.md.clear()
@@ -45,7 +38,8 @@ class User(object):
         self.md.clear()
         t = Table('user', self.md, autoload=True)
         c_name = column('name')
-        s = select(columns=[column('id')], from_obj=t).where(c_name==self.name)
+        s = select(columns=[column('id')], 
+                   from_obj=t).where(c_name==self.name)
         r = s.execute().fetchone()
         if r:
             return r['id']
