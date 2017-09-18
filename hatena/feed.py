@@ -32,23 +32,18 @@ class Feed(object):
     def extract(self):
         """Extract bookmarked users from setted url."""
         users = []
-        logging.info('URL:{}'.format(self.url))
 
         # TESTING
         if not self._load_id():
-            logging.info('Regist!!!!')
             self._append()
 
-        # Abolish url as argument.
         api_url = self._make_entry_api_url(self.url)
         result = self._request(api_url)
         if not result:
-            logging.info('No targets')
             return
         for b in result.get('bookmarks', []):
             if "user" not in b:
                 continue
-            # TODO: Ignore myself.
             users.append(User(self.engine, b["user"]))
         time.sleep(self.sleep_sec)
         return users
@@ -66,23 +61,22 @@ class Feed(object):
         return requests.get(url).json()
 
     def _load_id(self):
-        logging.info(self.url)
-        logging.info('------>')
         t = Table('feed', self.md)
         c_url = column('url')
         c_id = column('id')
         s = select(columns=[c_id], from_obj=t).where(c_url==self.url)
         r = s.execute().fetchone()
-        logging.info(r)
         if r:
             return r['id']
         return None
 
     def _append(self):
+        logging.info('SAVE MY FEED')
+        logging.info(self.url)
         self.md.clear()
         md = MetaData(self.engine)
         t = Table('feed', md, autoload=True)
-        logging.info(self.url)
         i = insert(t).values(url=self.url,
                              title=self.title)
         i.execute()
+        logging.info('----------------------')

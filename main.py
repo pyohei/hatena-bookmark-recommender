@@ -40,8 +40,7 @@ def main(user):
     my_b = MyBookmark(engine, my_u)
     my_b.save()
 
-    # TODO: create transaction the below process.
-    for f in my_b.feeds:
+    for f in my_b.new_feeds:
         users = f.extract()
         for u in users:
             logging.info(u.id)

@@ -12,19 +12,16 @@ from sqlalchemy import Table
 from sqlalchemy.sql import insert, column, select
 
 HATENA_FEED_URL =  "http://b.hatena.ne.jp/{user}/rss?of={no}"
-# TODO: Change these parameters into argument.
-START_FEED_ID = 0
-#LAST_FEED_ID = 200
-LAST_FEED_ID = 20
 
 class Bookmark(object):
 
-    def __init__(self, engine, user):
+    def __init__(self, engine, user, start_no=0, end_no=100):
         self.engine = engine
         self.md = MetaData(self.engine)
-        self.interval = 0.5
         self.user = user
         self._feeds = []
+        self.start_no = 0
+        self.end_no = 100
 
     @property
     def feeds(self):
@@ -36,22 +33,18 @@ class Bookmark(object):
     def _load(self):
         """Load feed info."""
         interval = 20 # API default setting.
-        # User logging
-        logging.info('User: {}, {}'.format(self.user.id, self.user.name))
-        feeds = []
-        start = START_FEED_ID
-        end = LAST_FEED_ID
 
-        for i in range(start, end, interval):
+        for i in range(self.start_no,
+                       self.end_no,
+                       interval):
             # Feed list logging
-            logging.info('Feed {} - {}'.format(i, i+interval))
+            logging.info('"""""""""""' + str(i))
             url = self._make_feed_api_url(i)
             feed = self._request(url)
             if not feed["entries"]:
                 break
-            feeds += self._process_entry(feed)
-            time.sleep(self.interval)
-        self._feeds = feeds
+            self._append_to_feeds(feed)
+            time.sleep(2)
 
     def _make_feed_api_url(self, id):
         """Create api url of rss feed."""
@@ -64,14 +57,11 @@ class Bookmark(object):
         """
         return feedparser.parse(requests.get(url).text)
 
-    def _process_entry(self, feed):
-        l = []
-        # Discontinue loop
+    def _append_to_feeds(self, feed):
         for f in feed["entries"]:
             link = f["link"]
             title = f['title']
-            l.append(Feed(self.engine, link, title))
-        return l
+            self._feeds.append(Feed(self.engine, link, title))
 
     def save(self):
         """Save url."""
@@ -79,18 +69,21 @@ class Bookmark(object):
         if not self._feeds:
             self._load()
         # TODO: Load user no
+        logging.info('SAVE BOOKMARK')
         for f in self._feeds:
-            if not self._has_record(f.id):
-                logging.info('*****************************')
+            logging.info(f.url)
+            if self._has_record(f.id):
+                # TODO:
+                #   Fix to use return if not existing new feed.
+                #   To escape duplicate access.   
+                logging.info('IGNORE')
                 continue
-            logging.info('++++++++++++++++++++++++++')
+            logging.info('ADD')
             self._register(f.id)
+        logging.info('----------------------')
     
     def _register(self, url_id):
         """Register bookmark transaction."""
-        logging.info('-----')
-        logging.info(self.user.id)
-        logging.info(url_id)
         self.md.clear()
         md = MetaData(self.engine)
         t = Table('bookmark', md, autoload=True)
