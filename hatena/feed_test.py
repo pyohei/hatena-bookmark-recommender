@@ -51,27 +51,6 @@ class TestFeed(unittest.TestCase):
         r = self.obj._request(url)
         self.assertIsInstance(r, dict)
     
-    def test__isregistered(self):
-        """Test existing target user."""
-        self.assertTrue(self.obj._is_register('test'))
-        self.assertFalse(self.obj._is_register('test2'))
-
-    def test__update_recommend_times(self):
-        """Test update recommend times."""
-        self.assertEqual(self.count_recommend_times(), 1)
-        self.obj._update_recommend_time('test')
-        self.assertEqual(self.count_recommend_times(), 2)
-
-    def test__append_user(self):
-        """Test append user."""
-        self.obj._append_user('hoge')
-        self.assertTrue(self.obj._is_register('hoge'))
-
-    def test_load_user_no(self):
-        self.assertEqual(self.obj.load_user_no('test'), 1)
-        self.obj._append_user('hoge')
-        self.assertEqual(self.obj.load_user_no('hoge'), 2)
-
     def test_extract(self):
         """Test extract user data"""
         # Success pattern.

@@ -1,21 +1,27 @@
 """My Bookmark class"""
 
-from sqlalchemy import MetaData
+from hatena.bookmark import Bookmark
 from sqlalchemy import Table
 from sqlalchemy.sql import select,insert,column
 
 
-class Mybook(object):
-
-    def __init__(self, engine):
-        self.engine = engine
-        self.md = MetaData(self.engine)
+class MyBookmark(Bookmark):
 
     def register(self, url):
         """Register bookmark urls."""
         if self._has_record(url):
             return
         self._register(url)
+
+    def save(self):
+        self._load()
+        for u in self.urls:
+            if self._has_record(u.url):
+                print("Existing!.")
+                continue
+            print("Register!.")
+            self._register(u.url)
+            # Append
 
     def _register(self, bookmark):
         """Register bookmark url."""

@@ -6,7 +6,6 @@ import time
 
 import feedparser
 import requests
-from mybook import Mybook
 from feed import Feed
 from sqlalchemy import MetaData
 from sqlalchemy import Table
@@ -20,12 +19,11 @@ LAST_FEED_ID = 20
 
 class Bookmark(object):
 
-    def __init__(self, engine, user, is_base_user=False):
+    def __init__(self, engine, user):
         self.engine = engine
         self.md = MetaData(self.engine)
         self.interval = 0.5
         self.user = user
-        self.is_base_user = is_base_user
         self.urls = []
 
     @property
@@ -77,18 +75,13 @@ class Bookmark(object):
         # TODO: Create test code.
         if not self.urls:
             self._load()
-        if self.is_base_user:
-            for u in self.urls:
-                b = Mybook(self.engine)
-                b.register(u.url)
-        else:
-            # TODO: Load user no
-            for url in self.urls:
-                # will discontinue
-                if self._is_long_url(url.url):
-                    logging.info("Url exceeds 255{}.".format(url.url))
-                    continue
-                self._append(url)
+        # TODO: Load user no
+        for url in self.urls:
+            # will discontinue
+            if self._is_long_url(url.url):
+                logging.info("Url exceeds 255{}.".format(url.url))
+                continue
+            self._append(url)
     
     def _is_long_url(self, url):
         """Check the url is over database column setting."""

@@ -87,4 +87,3 @@ class Feed(object):
         i = insert(t).values(url=self.url,
                              title=self.title)
         i.execute()
-

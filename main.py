@@ -13,6 +13,7 @@ Usage:
 
 import logging
 import time
+from hatena.my_bookmark import MyBookmark
 from hatena.bookmark import Bookmark
 from hatena.user import User
 #from hatena.recommend import Recommend
@@ -32,14 +33,12 @@ def main(user):
       - Recommend url from all bookmarked urls
 
     """
-
     logging.basicConfig(level=logging.INFO)
     engine = create_engine(ENGINE)
 
     my_u = User(engine, user)
-    my_b = Bookmark(engine, my_u, True)
+    my_b = MyBookmark(engine, my_u)
     my_b.save()
-    logging.info('Save Url-->')
 
     # TODO: create transaction the below process.
     for f in my_b.feeds:
