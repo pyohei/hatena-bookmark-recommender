@@ -1,7 +1,7 @@
 """My Bookmark class"""
 
 import logging
-from hatena.bookmark import Bookmark
+from bookmark import Bookmark
 from sqlalchemy import Table
 from sqlalchemy.sql import select,insert,column
 
@@ -14,12 +14,6 @@ class MyBookmark(Bookmark):
     def __init__(self, engine, user):
         self._new_feeds = []
         super(MyBookmark, self).__init__(engine, user)
-
-    def register(self, url):
-        """Register bookmark feeds."""
-        if self._has_record(url):
-            return
-        self._register(url)
 
     @property
     def new_feeds(self):
