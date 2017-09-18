@@ -23,7 +23,7 @@ from sqlalchemy import create_engine
 ENGINE = 'sqlite:///hatena.db'
 
 
-def main(user):
+def main(user_name):
     """Main script.
 
     The outline of this script is the below.
@@ -36,18 +36,27 @@ def main(user):
     logging.basicConfig(level=logging.INFO)
     engine = create_engine(ENGINE)
 
-    my_u = User(engine, user)
+    # Cahce user date not to access duplicate.
+    user_cache = []
+
+    my_u = User(engine, user_name)
     my_b = MyBookmark(engine, my_u)
     my_b.save()
+
+    user_cache.append(my_u.id)
 
     for f in my_b.new_feeds:
         users = f.extract()
         for u in users:
-            logging.info(u.id)
-            logging.info(u.name)
             time.sleep(1)
+            if u.id in user_cache:
+                logging.warn('Already!!!!!!!!!!')
+                logging.info(u.id)
+                logging.info(u.name)
+                continue
             b = Bookmark(engine, u)
             b.save()
+            user_cache.append(u.id)
             break
     logging.info('--->Export Result')
     # Recommend
