@@ -40,7 +40,7 @@ class Feed(object):
         api_url = self._make_entry_api_url(self.url)
         result = self._request(api_url)
         if not result:
-            return
+            return users
         for b in result.get('bookmarks', []):
             if "user" not in b:
                 continue

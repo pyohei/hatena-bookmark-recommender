@@ -1,3 +1,4 @@
+"""Feed test"""
 import unittest
 import feed
 from sqlalchemy import create_engine
@@ -14,30 +15,20 @@ class TestFeed(unittest.TestCase):
             TODO: Finally I'm thinking to convert ORM function.
             """
             create_sql = """
-                CREATE TABLE `users` (
-                  `user_no` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                  `user_name` TEXT NOT NULL,
-                  `recomend_times` INTEGER NOT NULL DEFAULT 1,
-                  `register_datetime` datetime,
-                  `update_time` timestamp
-                  );
-                """
+                CREATE TABLE `feed` (
+                  `id`    INTEGER PRIMARY KEY AUTOINCREMENT,
+                  `url`   TEXT UNIQUE,
+                  `title` TEXT
+                );
+             """
             insert_sql = """
-                INSERT INTO `users` (`user_name`, `recomend_times`, `register_datetime`)
-                VALUES ('test', 1, '2017-01-01 00:00:00');
+                INSERT INTO `feed` (`url`, `title`)
+                  VALUES ('http://test', 'test');
                 """
             c = engine.connect()
             c.execute(create_sql)
             c.execute(insert_sql)
-        def _count_recommend_times():
-            sql = """
-                SELECT recomend_times as cnt FROM users WHERE user_name = 'test'
-                """
-            c = engine.connect()
-            r = c.execute(sql)
-            return r.fetchone()['cnt']
         _create_test_data()
-        self.count_recommend_times = _count_recommend_times
 
     def test__make_entry_api_url(self):
         """Test code of _make_url"""
@@ -52,12 +43,31 @@ class TestFeed(unittest.TestCase):
         self.assertIsInstance(r, dict)
     
     def test_extract(self):
-        """Test extract user data"""
-        # Success pattern.
-        self.assertIsInstance(self.obj.extract()[0], unicode)
-        # NG pattern.
-        self.obj.urls = 'http://www.hatena.ne.j'
+        """Test extract user data
+        
+        This result is `User` instance.
+        """
+        # TODO: increase test case.
+        # Success
+        self.assertIsInstance(self.obj.extract()[0].name, unicode)
+        # failure
+        self.obj.url = 'http://www.hatena.aaaa.aaa'
         self.assertEqual(self.obj.extract(), [])
+
+    def test__load_id(self):
+        self.assertEqual(self.obj._load_id(), None)
+        self.obj.url = 'http://test'
+        self.assertEqual(self.obj._load_id(), 1)
+    
+    def test__append(self):
+        self.obj.url = 'http://foobar'
+        self.obj._append()
+        self.assertEqual(self.obj._load_id(), 2)
+
+    def test_id(self):
+        self.assertEqual(self.obj.id, 2)
+        self.obj.url = 'http://test'
+        self.assertEqual(self.obj.id, 1)
 
 if __name__ == '__main__':
     unittest.main()
