@@ -65,7 +65,6 @@ class Bookmark(object):
 
     def save(self):
         """Save url."""
-        # TODO: Create test code.
         if not self._feeds:
             self._load()
         # TODO: Load user no

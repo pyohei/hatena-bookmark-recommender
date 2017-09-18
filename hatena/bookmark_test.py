@@ -11,7 +11,7 @@ class TestBookmark(unittest.TestCase):
         # User class mock.
         u = UserMock()
         u.id = 1
-        u.user = 'test'
+        u.name = 'test'
         self.obj = bookmark.Bookmark(engine, u)
         def _create_test_data():
             """Create database for test.
@@ -19,21 +19,18 @@ class TestBookmark(unittest.TestCase):
             TODO: Finally I'm thinking to convert ORM function.
             """
             create_sql = """
-                         CREATE TABLE `recomend_feed` (
-                           `no` INTEGER PRIMARY KEY AUTOINCREMENT,
-                           `collect_day` int NOT NULL,
-                           `collect_no` int NOT NULL,
-                           `url` text,
-                           `recomend_times` int DEFAULT 1,
-                           `user_no` int,
-                           `isAdapt` tinyint DEFAULT 0,
-                           `update_time` timestamp
-                         );
-                """
+                CREATE TABLE `bookmark` (
+                `id`              INTEGER PRIMARY KEY AUTOINCREMENT,
+                `url_id`          INTEGER,
+                `user_id`         INTEGER,
+                `registered_date` INTEGER
+                );
+            """
             insert_sql = """
-                INSERT INTO `recomend_feed` (`no`, `collect_day`, `collect_no`, `url`, `user_no`)
-                VALUES (1, {}, 1, 'http://test', 1);
-                """.format(date.today().strftime("%Y%m%d"))
+                INSERT INTO `bookmark` 
+                    (`url_id`, `user_id`, `registered_date`)
+                  VALUES (1, 1, {});
+            """.format(int(date.today().strftime("%Y%m%d")))
             c = engine.connect()
             c.execute(create_sql)
             c.execute(insert_sql)
@@ -42,75 +39,44 @@ class TestBookmark(unittest.TestCase):
 
     def test__make_feed_api_url(self):
         """Test code of _make_url"""
-        result = 'http://b.hatena.ne.jp/test/rss?of=test'
-        self.assertEqual(self.obj._make_feed_api_url('test'), result)
+        result = 'http://b.hatena.ne.jp/test/rss?of=20'
+        self.assertEqual(self.obj._make_feed_api_url(20), result)
 
     def test__request(self):
         """Test request"""
-        # Same with result of `test__make_entry_api_url`
         url = 'http://b.hatena.ne.jp/sample/rss?of=sample'
         r = self.obj._request(url)
         self.assertIsInstance(r, dict)
-        #self.assertEqual(r, 'aa')
         self.response = r
 
-    def test__process_entry(self):
-        url = 'http://b.hatena.ne.jp/sample/rss?of=sample'
-        r = self.obj._request(url)
-        self.assertIsInstance(self.obj._process_entry(r), list)
-
-    def test__is_long_url(self):
-        """Test url is 255 byte."""
-        base = 'x' * 255
-        self.assertFalse(self.obj._is_long_url(base))
-        self.assertTrue(self.obj._is_long_url(base+'x'))
-
-    def test__isregistered(self):
-        """Test existing target url."""
-        self.assertTrue(self.obj._is_register('http://test'))
-        self.assertFalse(self.obj._is_register('test2'))
-
-    def test___load_recommend_time(self):
-        """Test load recommend times."""
-        self.assertEqual(self.obj._load_recommend_time('http://test'), 1)
-
-    def test__update_recommend_time(self):
-        """Test update recommend times."""
-        self.assertEqual(self.obj._load_recommend_time('http://test'), 1)
-        self.obj._update_recommend_time('http://test')
-        self.assertEqual(self.obj._load_recommend_time('http://test'), 2)
-
-    def test__append_url(self):
-        """Test append recommend url."""
-        url = 'http://hoge'
-        self.obj._append_url(url, 1, 2)
-        self.obj._update_recommend_time(url)
-        self.assertEqual(self.obj._load_recommend_time(url), 2)
-        self.assertTrue(self.obj._is_register(url))
-
-    def test_load(self):
-        """Test load function."""
-        u = UserMock()
-        u.id = 1
-        u.user = 'sample'
-        self.obj.user = u
-        self.obj._load()
-        self.assertNotEqual(self.obj.feeds, [])
-        self.assertEqual(len(self.obj.feeds), 17)
+    def test_append_to_feeds(self):
+        f = {'entries': [{'link': 'http://test1', 'title': 'test1'},
+                         {'link': 'http://test2', 'title': 'test2'}]}
+        self.obj._append_to_feeds(f)
+        self.assertIsInstance(self.obj._feeds, list)
 
     def test_save(self):
         """Test save function."""
-        urls = []
-        for u in ['http://foo', 'http://bar']:
+        feeds = []
+        for i in range(105, 108):
             f = FeedMock()
-            # TODO: Delete urls attribute.
-            f.urls = u
-            f.url = u
-            urls.append(f)
-        self.obj.urls = urls
+            f.id = i
+            f.url = 'test{}'.format(str(i))
+            feeds.append(f)
+        self.obj._feeds = feeds
         self.obj.save()
-        for u in urls:
-            self.assertTrue(self.obj._is_register(u.url))
+        for f in feeds:
+            self.assertTrue(self.obj._has_record(f.id))
+
+    def test_feeds(self):
+        self.assertEqual(self.obj.feeds, [])
+
+    def test__register(self):
+        self.obj._register(100)
+        self.assertTrue(self.obj._has_record(100))
+
+    def test__has_record(self):
+        self.assertTrue(self.obj._has_record(1))
 
 class FeedMock(object):
     """Mock object for Feed."""
