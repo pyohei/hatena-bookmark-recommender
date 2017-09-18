@@ -17,6 +17,7 @@ class MyBookmark(Bookmark):
 
     @property
     def new_feeds(self):
+        """Return feed only new registered."""
         return self._new_feeds
 
     def save(self):

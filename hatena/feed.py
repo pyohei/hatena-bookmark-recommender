@@ -25,6 +25,7 @@ class Feed(object):
 
     @property
     def id(self):
+        """Load feed id."""
         if not self._load_id():
             self._append()
         return self._load_id()
@@ -33,10 +34,9 @@ class Feed(object):
         """Extract bookmarked users from setted url."""
         users = []
 
-        # TESTING
+        # TODO: Load id in __init__
         if not self._load_id():
             self._append()
-
         api_url = self._make_entry_api_url(self.url)
         result = self._request(api_url)
         if not result:
@@ -61,6 +61,7 @@ class Feed(object):
         return requests.get(url).json()
 
     def _load_id(self):
+        """Load feed id from database."""
         t = Table('feed', self.md)
         c_url = column('url')
         c_id = column('id')
@@ -71,6 +72,7 @@ class Feed(object):
         return None
 
     def _append(self):
+        """Add new feed url into database."""
         logging.info('SAVE MY FEED')
         logging.info(self.url)
         self.md.clear()

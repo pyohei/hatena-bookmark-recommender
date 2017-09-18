@@ -3,7 +3,6 @@
 from datetime import date
 import logging
 import time
-
 import feedparser
 import requests
 from feed import Feed
@@ -37,8 +36,6 @@ class Bookmark(object):
         for i in range(self.start_no,
                        self.end_no,
                        interval):
-            # Feed list logging
-            logging.info('"""""""""""' + str(i))
             url = self._make_feed_api_url(i)
             feed = self._request(url)
             if not feed["entries"]:
@@ -58,6 +55,7 @@ class Bookmark(object):
         return feedparser.parse(requests.get(url).text)
 
     def _append_to_feeds(self, feed):
+        """Parse and append feed data."""
         for f in feed["entries"]:
             link = f["link"]
             title = f['title']
