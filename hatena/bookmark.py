@@ -78,15 +78,8 @@ class Bookmark(object):
         # TODO: Load user no
         for url in self.urls:
             # will discontinue
-            if self._is_long_url(url.url):
-                logging.info("Url exceeds 255{}.".format(url.url))
-                continue
             self._append(url)
     
-    def _is_long_url(self, url):
-        """Check the url is over database column setting."""
-        return len(url) > 255
-
     def _append(self, url):
         """Append url into bookmark."""
         logging.info('-----')
