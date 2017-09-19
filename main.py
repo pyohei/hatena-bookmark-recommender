@@ -50,9 +50,6 @@ def main(user_name):
         for u in users:
             time.sleep(1)
             if u.id in user_cache:
-                logging.warn('Already!!!!!!!!!!')
-                logging.info(u.id)
-                logging.info(u.name)
                 continue
             b = Bookmark(engine, u)
             b.save()
