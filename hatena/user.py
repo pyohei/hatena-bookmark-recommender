@@ -10,7 +10,6 @@ class User(object):
     """User class."""
 
     def __init__(self, engine, name):
-        logging.basicConfig(level=20, format='%(asctime)s, %(filename)s, %(funcName)s, %(message)s')
         self.engine = engine 
         self.md = MetaData(self.engine)
         self.name = name
@@ -18,7 +17,7 @@ class User(object):
     @property
     def id(self):
         """Load id."""
-        logging.info(self.name)
+        logging.debug('Fetch id')
         n = self._load_user_no()
         if n:
             return n
@@ -30,19 +29,21 @@ class User(object):
         t = Table('user', self.md, autoload=True)
         i = insert(t).values(name=self.name)
         i.execute()
-        logging.info('Add!!!!!!')
         # TODO: Change logic.
-        return self._load_user_no()
+        _id = self._load_user_no()
+        logging.info('Add new user(id={}, name={}).'.format(_id, self.name))
+        return _id
 
     def _load_user_no(self):
         """Load user_no."""
         self.md.clear()
-        logging.info('LOAD!!!!!!')
         t = Table('user', self.md, autoload=True)
         c_name = column('name')
         s = select(columns=[column('id')], 
                    from_obj=t).where(c_name==self.name)
         r = s.execute().fetchone()
+        _id = None
         if r:
-            return r['id']
-        return None
+            _id = r['id']
+        logging.info('Load user id(name={}, id={}).'.format(self.name, _id))
+        return _id
