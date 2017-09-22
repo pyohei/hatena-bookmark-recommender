@@ -16,7 +16,6 @@ import time
 from hatena.my_bookmark import MyBookmark
 from hatena.bookmark import Bookmark
 from hatena.user import User
-#from hatena.recommend import Recommend
 from sqlalchemy import create_engine
 
 
@@ -55,12 +54,6 @@ def main(user_name):
             b.save()
             user_cache.append(u.id)
             break
-    logging.info('--->Export Result')
-    # Recommend
-    #r = Recommend(engine)
-    #recs = r.select()
-    #for r in recs:
-    #    print(r)
     logging.info('--->END')
 
 if __name__ == "__main__":
