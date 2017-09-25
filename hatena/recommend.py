@@ -1,6 +1,6 @@
 """Recommend url handle class."""
 from sqlalchemy import MetaData
-from sqlalchemy import Table
+from sqlalchemy import Table, Column, join
 from sqlalchemy.sql import select
 
 class Recommend(object):
@@ -22,9 +22,13 @@ class Recommend(object):
     def _load_top(self, num=100):
         """Load top recommend url"""
         self.md.clear()
-        t = Table('recomend_feed', self.md)
-        s = select(columns=['*'], 
-                   from_obj=t).order_by('recomend_times').limit(num)
+        my_bookmark = Table('my_bookmark', self.md, Column('url_id'))
+        bookmark = Table('bookmark', self.md, Column('url_id'))
+        feed = Table('feed', self.md, Column('id'))
+        j1 = join(bookmark, feed, bookmark.c.url_id == feed.c.id)
+        j2 = j1.join(my_bookmark, bookmark.c.url_id == my_bookmark.c.url_id, isouter=True)
+        s = select(columns=['*']).select_from(j2)
+        print(s)
         return s.execute()
 
     def _is_mybookmark(self, url):
@@ -34,3 +38,16 @@ class Recommend(object):
         w = "url = '{}'".format(url)
         s = select(columns=['url'], from_obj=t).where(w)
         return s.execute().scalar()
+
+"""Sample SQL
+select count(b.url_id), b.url_id, f.title, f.url
+from bookmark b
+inner join feed f
+on f.id = b.url_id
+left join my_bookmark m
+on b.url_id = m.url_id
+where m.url_id is null
+group by b.url_id
+having count(b.url_id) > 1
+order by count(b.url_id) desc limit 10;
+"""
