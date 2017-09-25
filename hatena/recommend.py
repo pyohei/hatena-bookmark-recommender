@@ -2,6 +2,7 @@
 from sqlalchemy import MetaData
 from sqlalchemy import Table, Column, join
 from sqlalchemy.sql import select
+from sqlalchemy.sql.functions import count
 
 class Recommend(object):
 
@@ -27,7 +28,9 @@ class Recommend(object):
         feed = Table('feed', self.md, Column('id'))
         j1 = join(bookmark, feed, bookmark.c.url_id == feed.c.id)
         j2 = j1.join(my_bookmark, bookmark.c.url_id == my_bookmark.c.url_id, isouter=True)
-        s = select(columns=['*']).select_from(j2)
+        s = select(columns=['*']).select_from(j2).where(
+                my_bookmark.c.url_id == None).group_by(
+                        bookmark.c.url_id).having(count(bookmark.c.url_id))
         print(s)
         return s.execute()
 
