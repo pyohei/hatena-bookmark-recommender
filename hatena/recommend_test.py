@@ -63,11 +63,6 @@ class TestRecommend(unittest.TestCase):
         r3 = self.obj._load_top(1)
         self.assertEqual(r3.fetchone()[3], u'http://test')
 
-    def test__is_mybookmark(self):
-        """Test the function of `_is_mybookmark`"""
-        self.assertTrue(self.obj._is_mybookmark('http://test'))
-        self.assertFalse(self.obj._is_mybookmark('http://test2'))
-
     def test_select(self):
         """Test the function of `select`"""
         u = self.obj.select()
