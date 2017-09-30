@@ -42,5 +42,5 @@ class Recommend(object):
             my_bookmark.c.url_id == None).group_by(
                 bookmark.c.url_id).having(count(bookmark.c.url_id)).order_by(
                     count(bookmark.c.url_id).desc()).limit(10)
-        print(s)
+        #print(s)
         return s.execute()
