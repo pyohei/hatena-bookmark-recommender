@@ -1,10 +1,9 @@
 """Notification recommend feed."""
 
+import requests
 
 def main():
-    # Load target
-    # Insert new target
-    # Export Target(Notify)
+    """Send message with Line"""
     pass
 
 if __name__ == '__main__':
