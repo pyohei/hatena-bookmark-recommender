@@ -1,6 +1,7 @@
 """Notification recommend feed."""
 
 import requests
+import os
 
 def main():
     """Send message with Line"""
