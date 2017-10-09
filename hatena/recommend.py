@@ -11,11 +11,13 @@ class Recommend(object):
         self.md = MetaData(self.engine)
 
     def select(self):
-        rank_urls = []
-        recs = self._load_top()
-        for rec in recs:
-            rank_urls.append(rec["url"])
-        return rank_urls
+        #rank_urls = []
+        return self._load_top()
+        #return recs
+        #for rec in recs:
+        #    rank_urls.append(rec["url"])
+        #    rank_urls.append(rec["url"])
+        #return rank_urls
 
     def _load_top(self, num=100):
         """Load top recommend url
