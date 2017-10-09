@@ -11,13 +11,10 @@ class Recommend(object):
         self.md = MetaData(self.engine)
 
     def select(self):
-        #rank_urls = []
-        return self._load_top()
-        #return recs
-        #for rec in recs:
-        #    rank_urls.append(rec["url"])
-        #    rank_urls.append(rec["url"])
-        #return rank_urls
+        rank_urls = []
+        for rec in self._load_top():
+            rank_urls.append((rec["title"], rec["url"], rec["id"]))
+        return rank_urls
 
     def _load_top(self, num=100):
         """Load top recommend url
@@ -39,10 +36,10 @@ class Recommend(object):
         self.md.clear()
         my_bookmark = Table('my_bookmark', self.md, Column('url_id'))
         bookmark = Table('bookmark', self.md, Column('url_id'))
-        feed = Table('feed', self.md, Column('id'))
+        feed = Table('feed', self.md, Column('id'), Column('title'), Column('url'))
         j1 = join(bookmark, feed, bookmark.c.url_id == feed.c.id)
         j2 = j1.join(my_bookmark, bookmark.c.url_id == my_bookmark.c.url_id, isouter=True)
-        s = select(columns=['*']).select_from(j2).where(
+        s = select(columns=[feed.c.id, feed.c.url, feed.c.title]).select_from(j2).where(
             my_bookmark.c.url_id == None).group_by(
                 bookmark.c.url_id).having(count(bookmark.c.url_id)).order_by(
                     count(bookmark.c.url_id).desc()).limit(10)

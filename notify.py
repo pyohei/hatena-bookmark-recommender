@@ -14,15 +14,14 @@ class Notification(object):
         self.engine = engine 
         self.md = MetaData(self.engine)
 
-    def send_line(self, title, url, url_id):
-        print title
-        print url
-        print url_id
-        body = title + '\n' + url
+    def send_line(self, rec):
+        # rec is tuple of `(title, url, id)`
+        body = rec[0] + '\n' + rec[1]
         params = {"value1": body}
         url = os.environ.get('HATENA_FEED_NOTIFICATION_URL', '')
         r = requests.post(url, params)
-        #self._set_as_notified(int(url_id))
+        print r
+        self._set_as_notified(int(rec[2]))
 
     def _set_as_notified(self, url_id):
         self.md.clear()
