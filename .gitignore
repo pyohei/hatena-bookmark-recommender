@@ -3,3 +3,4 @@ conf.py
 MEMO
 
 venv/*
+.DS_Store
