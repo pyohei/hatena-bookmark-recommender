@@ -17,7 +17,6 @@ from hatena.my_bookmark import MyBookmark
 from hatena.bookmark import Bookmark
 from hatena.user import User
 from hatena.recommend import Recommend
-from notify import Notification
 from sqlalchemy import create_engine
 
 
@@ -58,12 +57,8 @@ def main(user_name):
             break
 
     r = Recommend(engine)
-    n = Notification(engine)
     for rec in r.select():
-        n.send_line(rec)
-        logging.info('--->')
-
-    logging.info('--->END')
+        logging.info(rec)
 
 if __name__ == "__main__":
     import argparse
