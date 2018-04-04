@@ -68,6 +68,6 @@ def main(user_name):
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('-u', '--user', required=True, help='User name')
+    parser.add_argument('hatena_user', help='Hatena user name')
     args = parser.parse_args()
-    main(args.user)
+    main(args.hatena_user)
