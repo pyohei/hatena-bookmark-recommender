@@ -1,13 +1,13 @@
 """Hatena bookmark recommender.
 
-This script create articles which you have interested .
+This script create articles which you have interested.
 The ingredient of script is Hatena user. After you give your hatena user name, this script
 create your interested articles.
 
 Usage:
     The target user can direct from argument.
 
-      python main.py -u xxxxx
+      python main.py `your hatena user name`
 
 """
 
