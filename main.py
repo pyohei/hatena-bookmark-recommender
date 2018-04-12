@@ -33,7 +33,9 @@ def main(user_name):
       - Recommend url from all bookmarked urls
 
     """
-    logging.basicConfig(level=logging.INFO)
+    log_format = '%(asctime)s\t[%(levelname)s]\t%(message)s'
+    logging.basicConfig(level=logging.INFO, format=log_format)
+
     engine = create_engine(ENGINE)
 
     # Cahce user date not to access duplicate.
