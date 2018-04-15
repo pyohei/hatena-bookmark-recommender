@@ -1,7 +1,7 @@
 """My Bookmark class"""
 
 import logging
-from bookmark import Bookmark
+from .bookmark import Bookmark
 from sqlalchemy import Table
 from sqlalchemy.sql import select,insert,column
 

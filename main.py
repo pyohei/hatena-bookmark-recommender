@@ -13,11 +13,12 @@ Usage:
 
 import logging
 import time
+from sqlalchemy import create_engine
+
 from hatena.my_bookmark import MyBookmark
 from hatena.bookmark import Bookmark
 from hatena.user import User
 from hatena.recommend import Recommend
-from sqlalchemy import create_engine
 
 
 ENGINE = 'sqlite:///hatena.db'

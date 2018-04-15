@@ -5,10 +5,11 @@ import logging
 import time
 import feedparser
 import requests
-from feed import Feed
 from sqlalchemy import MetaData
 from sqlalchemy import Table
 from sqlalchemy.sql import insert, column, select
+
+from .feed import Feed
 
 HATENA_FEED_URL =  "http://b.hatena.ne.jp/{user}/rss?of={no}"
 

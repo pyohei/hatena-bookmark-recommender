@@ -1,14 +1,17 @@
 """Feed operation class"""
 
 import logging
-import urllib
+try:
+    from urllib import quote
+except ImportError:
+    from urllib.parse import  quote
 import time
-from user import User
+import requests
 from sqlalchemy import MetaData
 from sqlalchemy import Table
 from sqlalchemy.sql import select, column, insert
 
-import requests
+from .user import User
 
 HATENA_ENTRY_URL = "http://b.hatena.ne.jp/entry/jsonlite/?url={url}"
 
@@ -50,7 +53,7 @@ class Feed(object):
 
     def _make_entry_api_url(self, url):
         """Create hatena bookmark entry api url."""
-        e_url = urllib.quote(url, safe='')
+        e_url = quote(url, safe='')
         return HATENA_ENTRY_URL.format(url=e_url)
 
     def _request(self, url):
