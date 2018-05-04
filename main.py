@@ -21,7 +21,9 @@ from hatena.user import User
 from hatena.recommend import Recommend
 
 
-ENGINE = 'sqlite:///hatena.db'
+# Defaul database engine.
+# If you want to change other database, you should change this variables.
+ENGINE = 'sqlite:///sample/hatena.db'
 
 
 def main(user_name):
