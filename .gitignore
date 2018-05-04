@@ -2,5 +2,8 @@ conf.py
 *.pyc
 MEMO
 
-venv/*
+venv2/*
+venv3/*
 .DS_Store
+
+my_hatena.db
