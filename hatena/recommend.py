@@ -16,7 +16,7 @@ class Recommend(object):
             rank_urls.append((rec["title"], rec["url"], rec["id"]))
         return rank_urls
 
-    def _load_top(self, num=1):
+    def _load_top(self, num=5):
         """Load top recommend url"""
         self.md.clear()
         my_bookmark = Table('my_bookmark', self.md, Column('url_id'))

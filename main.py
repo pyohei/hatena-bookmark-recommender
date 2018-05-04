@@ -62,8 +62,9 @@ def main(user_name):
             break
 
     r = Recommend(engine)
-    for rec in r.select():
-        logging.info(rec)
+    with open('recommend.txt', 'w') as t:
+        for rec in r.select():
+            t.write('{0} \n  {1}\n'.format(rec[0], rec[1]))
 
 if __name__ == "__main__":
     import argparse
