@@ -19,6 +19,7 @@ from hatena.my_bookmark import MyBookmark
 from hatena.bookmark import Bookmark
 from hatena.user import User
 from hatena.recommend import Recommend
+from hatena.notify import Notification
 
 
 # Defaul database engine.
@@ -62,9 +63,11 @@ def main(user_name):
             break
 
     r = Recommend(engine)
+    n = Notification(engine)
     with open('recommend.txt', 'w') as t:
         for rec in r.select():
             t.write('{0} \n  {1}\n'.format(rec[0], rec[1]))
+            n.add_as_notified(rec[2])
 
 if __name__ == "__main__":
     import argparse
