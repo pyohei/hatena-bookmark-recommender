@@ -52,3 +52,5 @@ create table my_bookmarks (
     invalid
     )
 );
+
+CREATE TABLE "feed" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `url` TEXT UNIQUE, `title` TEXT );
