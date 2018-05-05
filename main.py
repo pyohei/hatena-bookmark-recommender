@@ -66,7 +66,7 @@ def main(user_name):
     n = Notification(engine)
     with open('recommend.txt', 'w') as t:
         for rec in r.select():
-            t.write('{0} \n  {1}\n'.format(rec[0], rec[1]))
+            t.write('{0} \n  　　{1}\n'.format(rec[0], rec[1]))
             n.add_as_notified(rec[2])
 
 if __name__ == "__main__":
